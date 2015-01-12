@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class Fenster extends GameObject{
 
-	private Sprite sprite;
+	private Sprite sprite = null;
 	
 	public Fenster(GameContext context, int x, int y, int width, int height) {
 		super(context, GameObject.TYPE_GROUND);
@@ -32,9 +32,11 @@ public class Fenster extends GameObject{
 		groundBox.setAsBox(getWidth()/2/GameContext.PIXELSPERMETER, getHeight()/2/GameContext.PIXELSPERMETER);
 		// Create a fixture from our polygon shape and add it to our ground body  
 		Fixture fixture = body.createFixture(groundBox, 0.0f); 
-		fixture.setUserData(this);
+		fixture.setUserData(GameObject.TYPE_GROUND);
 		// Clean up after ourselves
 		groundBox.dispose();
+		
+		body.setUserData(this);
 		updateBounds();
 	}
 		

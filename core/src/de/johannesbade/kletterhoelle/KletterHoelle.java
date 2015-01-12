@@ -18,21 +18,31 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	private SpriteBatch batch;
 	private OrthographicCamera camera = null;
 	private GameContext context = null;
-	private Fenster fenster1, fenster2, fenster3;
+	
 	private Stickman stickman1 = null;
 	private Box2DDebugRenderer debugRenderer;
+	
+	private boolean key_left_pressed = false;
+	private boolean key_right_pressed = false;
+	private boolean key_up_pressed = false;
+	private boolean key_down_pressed = false;
 	
 	@Override
 	public void create () {
 		context = new GameContext();
 		batch = new SpriteBatch();
-		fenster1 = new Fenster(context, 276, 766, 1950, 220);
-		fenster2 = new Fenster(context, 1111, 240,1140,220);
-		fenster3 = new Fenster(context,-728, 110,1141,220);
 		
-		context.getStage().addActor(fenster1);
-		context.getStage().addActor(fenster2);
-		context.getStage().addActor(fenster3);
+		//Fenster der Kletterhalle
+		context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
+		context.getStage().addActor(new Fenster(context, 1111, 240,1140,220));
+		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
+		
+		//Zusaetzliche Plattformen
+		context.getStage().addActor(new Fenster(context,540, 120,111,220));
+		context.getStage().addActor(new MovingPlatform(context,810, 120,150,220, 2));
+		
+		context.getStage().addActor(new Coin(context, 300, 500));
+
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
@@ -59,11 +69,14 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 	    Matrix4 cam = context.getStage().getCamera().combined.cpy();
 		
-		
+		if (key_left_pressed) camera.position.x -= 3;
+		if (key_right_pressed) camera.position.x += 3;
+		if (key_up_pressed) camera.position.y += 3;
+		if (key_down_pressed) camera.position.y -= 3;
+	    
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 			context.getStage().draw();
-			
 		batch.end();
 		
 		debugRenderer.render(context.getWorld(), cam.scl(GameContext.PIXELSPERMETER));
@@ -73,13 +86,13 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public boolean keyDown(int keycode) {
 		switch (keycode)
 		{
-			case Keys.LEFT: camera.position.x-=15;
+			case Keys.LEFT: key_left_pressed = true;
 			break;
-			case Keys.RIGHT: camera.position.x+=15;
+			case Keys.RIGHT: key_right_pressed = true;
 			break;
-			case Keys.UP: camera.position.y+=15;
+			case Keys.UP: key_up_pressed = true;
 			break;
-			case Keys.DOWN: camera.position.y-=15;
+			case Keys.DOWN: key_down_pressed = true;
 			break;
 		}
 		
@@ -90,6 +103,19 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 
 	@Override
 	public boolean keyUp(int keycode) {
+		
+		switch (keycode)
+		{
+			case Keys.LEFT: key_left_pressed = false;
+			break;
+			case Keys.RIGHT: key_right_pressed = false;
+			break;
+			case Keys.UP: key_up_pressed = false;
+			break;
+			case Keys.DOWN: key_down_pressed = false;
+			break;
+		}
+		
 		stickman1.key(keycode, false);
 		
 		return false;
@@ -133,32 +159,42 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 
 	@Override
 	public void beginContact(Contact contact) {
+		if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_COIN )) System.out.println("COIN!");
 		if (contact.isTouching())
 		{
 			if (contact.getFixtureA() == stickman1.getSensorFixture())
 			{
-				if (contact.getFixtureB().getBody().getPosition().y < stickman1.getBody().getPosition().y) stickman1.setGrounded(true);
+				if ( contact.getFixtureB().getUserData().equals(GameObject.TYPE_GROUND) && contact.getFixtureB().getBody().getPosition().y < stickman1.getBody().getPosition().y)
+					{
+						stickman1.setGrounded(true);
+						stickman1.setGroundedPlattform( (GameObject) contact.getFixtureB().getBody().getUserData());
+					}
+				
 			}
 			if (contact.getFixtureB() == stickman1.getSensorFixture())
 			{
-				if (contact.getFixtureA().getBody().getPosition().y < stickman1.getBody().getPosition().y) stickman1.setGrounded(true);
+				if (contact.getFixtureA().getUserData().equals(GameObject.TYPE_GROUND) && contact.getFixtureA().getBody().getPosition().y < stickman1.getBody().getPosition().y)
+					{
+						stickman1.setGrounded(true);
+						stickman1.setGroundedPlattform( (GameObject) contact.getFixtureA().getBody().getUserData());
+					}
 			}
 		}
 	}
 
 	@Override
 	public void endContact(Contact contact) {
-		if (contact.isTouching())
-		{
+		
+		
 			if (contact.getFixtureA() == stickman1.getSensorFixture())
-			{
-				if (contact.getFixtureB().getBody().getPosition().y <= stickman1.getBody().getPosition().y) stickman1.setGrounded(false);
+			{				
+				if ( contact.getFixtureB().getUserData().equals(GameObject.TYPE_GROUND)) stickman1.setGrounded(false);
 			}
 			if (contact.getFixtureB() == stickman1.getSensorFixture())
 			{
-				if (contact.getFixtureA().getBody().getPosition().y <= stickman1.getBody().getPosition().y) stickman1.setGrounded(false);
+				if ( contact.getFixtureA().getUserData().equals(GameObject.TYPE_GROUND)) stickman1.setGrounded(false);
 			}
-		}
+		
 	}
 
 	@Override

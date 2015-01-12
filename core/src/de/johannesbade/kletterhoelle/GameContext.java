@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Array;
 public class GameContext {
 	
 	public static final float GAME_SPEED =15;
-	public static final float GRAVITY = -9f;
+	public static final float GRAVITY = -50f;
 	public static final float PIXELSPERMETER = 100;
 	
 	private World world = null;

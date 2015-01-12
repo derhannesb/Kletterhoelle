@@ -3,14 +3,15 @@ package de.johannesbade.kletterhoelle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class Stickman extends GameObject{
@@ -21,9 +22,9 @@ public class Stickman extends GameObject{
 	public static final int LEFT = -1;
 	public static final int RIGHT = 1;
 	
-	public static final float BASE_SPEED = 5;
+	public static final float BASE_SPEED = 2;
 	public static final float BASE_JUMP_ACC = 550;
-	public static final float MAX_VELOCITY = BASE_SPEED*1.5f;
+	public static final float MAX_VELOCITY = BASE_SPEED*3f;
 	
 	private Fixture physicsFixture = null;
 	private Fixture sensorFixture = null;
@@ -40,13 +41,19 @@ public class Stickman extends GameObject{
 	private boolean key_jump_pressed = false;
 	
 	private float stillTime = 0;
+	long lastGroundTime = 0;
 	
 	private boolean grounded= false;
-
 	
+	private boolean jump = false;
+	
+	private GameObject groundedPlattform = null;
+	
+
 	public Stickman(GameContext context, float x, float y) {
 		super(context, GameObject.TYPE_PLAYER);
 		sprite = new Sprite(new Texture("stickman.png"));
+		
 		setWidth(sprite.getWidth());
 		setHeight(sprite.getHeight());
 		setX(x);
@@ -63,30 +70,26 @@ public class Stickman extends GameObject{
 		body = context.getWorld().createBody(bodyDef);
 
 		PolygonShape poly = new PolygonShape();
-		poly.setAsBox((getWidth()/2)/GameContext.PIXELSPERMETER, ((fgetHeight()-getWidth())/2)/GameContext.PIXELSPERMETER);
+		poly.setAsBox((getWidth()/2)/GameContext.PIXELSPERMETER, ((getHeight()-getWidth())/2)/GameContext.PIXELSPERMETER);
 		physicsFixture = body.createFixture(poly, 1);
+		physicsFixture.setUserData(GameObject.TYPE_PLAYER);
 		poly.dispose();
 		
 		
-		// Create a circle shape and set its radius to 6
 		CircleShape circle = new CircleShape();
 		circle.setRadius((getWidth()/2)/GameContext.PIXELSPERMETER);
 		circle.setPosition(new Vector2(0,(-getHeight()/2)/GameContext.PIXELSPERMETER));
-		// Create a fixture definition to apply our shape to
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = circle;
-		fixtureDef.friction = 0f;
+		sensorFixture = body.createFixture(circle,0);
+		sensorFixture.setUserData(GameObject.TYPE_PLAYER);
 
-		// Create our fixture and attach it to the body
-		sensorFixture = body.createFixture(fixtureDef);
-
-		// Remember to dispose of any shapes after you're done with them!
-		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
 		
 		body.setBullet(true);
 		body.setFixedRotation(true);
+		body.setUserData(this);
 		updateBounds();
+		
+		
 	}
 	
 	@Override
@@ -99,11 +102,18 @@ public class Stickman extends GameObject{
 	@Override
 	public void act(float delta) {
 		super.act(delta);
+		body.setAwake(true);
 		
 		vel = body.getLinearVelocity();
 		pos = body.getPosition();
 		
-		body.setAwake(true);
+		if(grounded) {
+			lastGroundTime = System.nanoTime();
+		} else {
+			if(System.nanoTime() - lastGroundTime < 100000000) {
+				grounded = true;
+			}
+		}
 		
 		// cap max velocity on x		
 		if(Math.abs(vel.x) > MAX_VELOCITY) {			
@@ -111,6 +121,7 @@ public class Stickman extends GameObject{
 			body.setLinearVelocity(vel.x, vel.y);
 		}
 		
+		// calculate stilltime & damp
 		if (!key_left_pressed && !key_right_pressed)
 		{
 			stillTime += Gdx.graphics.getDeltaTime();
@@ -118,9 +129,10 @@ public class Stickman extends GameObject{
 		}
 		else
 		{
-			stillTime = 0f;
+			stillTime = 0;
 		}
 		
+		// disable friction while jumping
 		if (!grounded) {
 			physicsFixture.setFriction(0f);
 			sensorFixture.setFriction(0f);
@@ -129,29 +141,39 @@ public class Stickman extends GameObject{
 		{
 			if (!key_left_pressed && !key_right_pressed && stillTime > 0.2f)
 			{
-				physicsFixture.setFriction(0f);
-				sensorFixture.setFriction(0f);				
+				physicsFixture.setFriction(100f);
+				sensorFixture.setFriction(100f);	
 			}
 			else
 			{
 				physicsFixture.setFriction(0.2f);
-				sensorFixture.setFriction(0.2f);			
+				sensorFixture.setFriction(0.2f);
 			}
 			
-			if (grounded)
+			
+			if (groundedPlattform != null)
 			{
-				body.applyLinearImpulse(0, -1, pos.x, pos.y, true);
+				//body.applyLinearImpulse(0, -24, pos.x, pos.y, true);
+				
 			}
+			
 		}
 		
-		if (key_left_pressed && vel.x > -MAX_VELOCITY) body.applyLinearImpulse(-1f, 0, pos.x , pos.y, true);
-		if (key_right_pressed && vel.x < MAX_VELOCITY) body.applyLinearImpulse(1f, 0, pos.x , pos.y, true);
+		// apply left impulse, but only if max velocity is not reached yet
+		if (key_left_pressed && vel.x > -MAX_VELOCITY) body.applyLinearImpulse(-BASE_SPEED, 0, pos.x , pos.y, true);
+		// apply right impulse, but only if max velocity is not reached yet
+		if (key_right_pressed && vel.x < MAX_VELOCITY) body.applyLinearImpulse(BASE_SPEED, 0, pos.x , pos.y, true);
 
-		if (key_jump_pressed && grounded) {
-			key_jump_pressed = false;
-			body.setLinearVelocity(vel.x,0);
-			body.setTransform(pos.x, pos.y + 0.01f, 0);
-			body.applyLinearImpulse(0, 20, pos.x, pos.y, true);
+		if (jump) {
+			jump = false;
+			
+			if (groundedPlattform != null)
+			{
+				groundedPlattform = null;
+				body.setLinearVelocity(vel.x,0);
+				body.setTransform(pos.x, pos.y + 0.01f, 0);
+				body.applyLinearImpulse(0, 10, pos.x, pos.y, true);
+			}
 		}
 	}
 	
@@ -161,9 +183,19 @@ public class Stickman extends GameObject{
 		
 		if (keyCode == key_left) key_left_pressed = pressed;
 		if (keyCode == key_right) key_right_pressed = pressed;
-		if (keyCode == key_jump) key_jump_pressed = pressed;		
+		if (keyCode == key_jump) {
+			if (pressed && grounded) jump = true;		
+		}
 	}
 
+
+	public GameObject getGroundedPlattform() {
+		return groundedPlattform;
+	}
+
+	public void setGroundedPlattform(GameObject groundedPlattform) {
+		this.groundedPlattform = groundedPlattform;
+	}
 
 	public Fixture getPhysicsFixture() {
 		return physicsFixture;
@@ -187,6 +219,7 @@ public class Stickman extends GameObject{
 
 	public void setGrounded(boolean grounded) {
 		this.grounded = grounded;
+		if (!grounded) groundedPlattform = null;
 	}
 	
 	
