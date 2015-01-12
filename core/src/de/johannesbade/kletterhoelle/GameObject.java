@@ -1,6 +1,7 @@
 package de.johannesbade.kletterhoelle;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class GameObject extends Actor{
@@ -12,6 +13,8 @@ public class GameObject extends Actor{
 	private Rectangle bounds = null;
 	private int type = -1;
 	private GameContext context = null;
+	protected Body body = null;
+	
 	
 	public GameObject(GameContext context, int type) {
 		bounds = new Rectangle();
@@ -51,6 +54,24 @@ public class GameObject extends Actor{
 	public void setType(int type) {
 		this.type = type;
 	}
+
+	public Body getBody() {
+		return body;
+	}
+
+	public void setBody(Body body) {
+		this.body = body;
+	}
+
+	public GameContext getContext() {
+		return context;
+	}
+
+	public void setContext(GameContext context) {
+		this.context = context;
+	}
+	
+	
 
 	
 }
