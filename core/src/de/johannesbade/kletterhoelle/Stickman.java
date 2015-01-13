@@ -58,6 +58,8 @@ public class Stickman extends GameObject{
 	
 	private Animation animation = null;
 	
+	private int controllerID = 0;
+	
 	public Stickman(GameContext context, float x, float y) {
 		super(context, GameObject.TYPE_PLAYER);
 		sprite = new Sprite(context.getAtlas().findRegion("stickmanwalk"));
@@ -219,6 +221,20 @@ public class Stickman extends GameObject{
 			if (pressed && grounded) jump = true;		
 		}
 	}
+	
+	public boolean button(int controllerID, int button, boolean pressed)
+	{
+		if (controllerID == this.controllerID)
+		{
+			if (button == key_left) key_left_pressed = pressed;
+			if (button == key_right) key_right_pressed = pressed;
+			if (button == key_jump) {
+				if (pressed && grounded) jump = true;		
+			}
+			return true;
+		}
+		return false;
+	}
 
 
 	public GameObject getGroundedPlattform() {
@@ -264,12 +280,38 @@ public class Stickman extends GameObject{
 		if (score < 0) score = 0;
 	}
 	
-	public void setKeys(int left, int right, int jump)
+	public void setKeys(int left, int right, int jump, int controllerID)
 	{
 		key_left = left;
 		key_right = right;
 		key_jump = jump;
+		this.controllerID = controllerID; 
 	}
+
+	public int getKey_left() {
+		return key_left;
+	}
+
+	public void setKey_left(int key_left) {
+		this.key_left = key_left;
+	}
+
+	public int getKey_right() {
+		return key_right;
+	}
+
+	public void setKey_right(int key_right) {
+		this.key_right = key_right;
+	}
+
+	public int getKey_jump() {
+		return key_jump;
+	}
+
+	public void setKey_jump(int key_jump) {
+		this.key_jump = key_jump;
+	}
+	
 	
 	
 }

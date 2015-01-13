@@ -6,12 +6,17 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -20,7 +25,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 
-public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener{
+public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
 	private SpriteBatch batch;
 	private OrthographicCamera camera = null;
 	private GameContext context = null;
@@ -49,10 +54,19 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public void addPlayer()
 	{
 		Stickman stickman = new Stickman(context,MathUtils.random(200,1700), 1200);
-		if (stickmen.size > 0) stickman.setKeys(Keys.J, Keys.L, Keys.I);
+		//if (stickmen.size > 0) stickman.setKeys(Keys.J, Keys.L, Keys.I, "Keyboard");
 		stickmen.add(stickman);
 		context.getStage().addActor(stickman);
 	}
+	
+	public void addPlayer(int left, int right, int jump, int controllerID)
+	{
+		Stickman stickman = new Stickman(context,MathUtils.random(200,1700), 1200);
+		if (stickmen.size > 0) stickman.setKeys(left, right, jump, controllerID);
+		stickmen.add(stickman);
+		context.getStage().addActor(stickman);
+	}
+	
 	
 	@Override
 	public void create () {
@@ -84,8 +98,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		//Spieler
 		
 		addPlayer();
-		addPlayer();
-
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
@@ -95,6 +107,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		context.getWorld().setContactListener(this);
 		
 		Gdx.input.setInputProcessor(this);
+		Controllers.addListener(this);
 		
 		debugRenderer = new Box2DDebugRenderer();
 	}
@@ -314,5 +327,82 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void connected(Controller controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnected(Controller controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean buttonDown(Controller controller, int buttonCode) {
+		itStickman = stickmen.iterator();
+		while (itStickman.hasNext())
+		{
+			itStickman.next().button(controller.hashCode(), buttonCode, true);			
+		}
+		return false;
+	}
+
+	@Override
+	public boolean buttonUp(Controller controller, int buttonCode) {
+		boolean controllerAssigned = false;
+
+		itStickman = stickmen.iterator();
+		while (itStickman.hasNext())
+		{
+			Stickman sTmp = itStickman.next(); 
+			if (!controllerAssigned) controllerAssigned = sTmp.button(controller.hashCode(), buttonCode, false);
+			if (controllerAssigned)
+			{
+				if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode) sTmp.setKey_left(buttonCode);
+				else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode) sTmp.setKey_right(buttonCode);
+			}
+			
+		}
+		if (!controllerAssigned) addPlayer(-1,-2, buttonCode, controller.hashCode());
+		
+		return false;
+	}
+
+	@Override
+	public boolean axisMoved(Controller controller, int axisCode, float value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean povMoved(Controller controller, int povCode,
+			PovDirection value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean xSliderMoved(Controller controller, int sliderCode,
+			boolean value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean ySliderMoved(Controller controller, int sliderCode,
+			boolean value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean accelerometerMoved(Controller controller,
+			int accelerometerCode, Vector3 value) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
