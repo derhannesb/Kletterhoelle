@@ -1,6 +1,5 @@
 package de.johannesbade.kletterhoelle;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -23,7 +22,7 @@ public class MovingPlatform extends GameObject {
 		super(context, GameObject.TYPE_GROUND);
 		this.maxDist = maxDist;
 		setBounds(x, y, width, height);
-		sprite = new Sprite(new Texture("fenster.jpg"));
+		sprite = new Sprite(context.getAtlas().findRegion("fenster"));
 		
 		BodyDef def = new BodyDef();
 		def.type = BodyType.KinematicBody;
@@ -42,7 +41,7 @@ public class MovingPlatform extends GameObject {
 		setY(y);
 		
 		body.setUserData(this);
-		dir.x = speed;
+		dir.y = speed;
 		
 	}
 	
@@ -61,7 +60,7 @@ public class MovingPlatform extends GameObject {
 		
 		dist += dir.len() * delta;
 		if(dist > maxDist) {
-			dir.x = dir.x * -1;
+			dir.y = dir.y * -1;
 			dist = 0;
 		}
 		

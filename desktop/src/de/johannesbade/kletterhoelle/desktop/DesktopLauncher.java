@@ -2,6 +2,7 @@ package de.johannesbade.kletterhoelle.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import de.johannesbade.kletterhoelle.KletterHoelle;
 
 public class DesktopLauncher {
@@ -10,6 +11,8 @@ public class DesktopLauncher {
 		config.width = 1920;
 		config.height = 1080;
 		//config.fullscreen = true;
+		
+		
 		new LwjglApplication(new KletterHoelle(), config);
 	}
 }

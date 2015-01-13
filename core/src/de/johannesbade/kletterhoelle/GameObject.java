@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class GameObject extends Actor{
 
+	public static final int TYPE_REMOVE = -1;
 	public static final int TYPE_GROUND = 0;
 	public static final int TYPE_PLAYER = 1;
 	public static final int TYPE_COIN = 2;
