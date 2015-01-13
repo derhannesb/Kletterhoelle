@@ -67,6 +67,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		stickman.setKeys(left, right, jump, controllerID);
 		stickmen.add(stickman);
 		context.getStage().addActor(stickman);
+		
+		
 	}
 	
 	
@@ -93,14 +95,17 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		playerColors.add(Color.BLACK);
 		
 		spawnPositions = new Array<Vector2>();
-		spawnPositions.add(new Vector2(1100,160+950));
 		spawnPositions.add(new Vector2(1680,160+950));
 		spawnPositions.add(new Vector2(1600,160+486));
 		spawnPositions.add(new Vector2(838,160+555));
 		spawnPositions.add(new Vector2(590,160+490));
 		
 		//Fenster der Kletterhalle
-		context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
+		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
+		
+		context.getStage().addActor(new Fenster(context, 276, 766, 950, 220));
+		context.getStage().addActor(new Fenster(context, 276+950+100, 766, 900, 220));
+		
 		context.getStage().addActor(new Fenster(context, 1111, 220,1140,220));
 		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
 		
@@ -110,6 +115,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		context.getStage().addActor(new MovingPlatform(context,990, 120,150,220, 2, 0));
 		
 		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,120,3, 2));
+		
+		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+940, 1000));
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
@@ -267,10 +274,9 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		}
 		if (!keyAssigned)
 		{
-			addPlayer(-1,-2, keycode, GameContext.CONTROLLER_KEYBOARD);
+			//addPlayer(-1,-2, keycode, GameContext.CONTROLLER_KEYBOARD);
 		}
-		
-		
+		if (keycode == Keys.F1) addPlayer(Keys.A,Keys.D, Keys.W, GameContext.CONTROLLER_KEYBOARD);
 		
 		return false;
 	}

@@ -61,11 +61,9 @@ public class Stickman extends GameObject{
 	
 	private int controllerID = 0;
 	
-	
 	public Stickman(GameContext context, float x, float y, Color color) {
 		super(context, GameObject.TYPE_PLAYER);
 	
-		
 		sprite = new Sprite(context.getAtlas().findRegion("stickmanwalk"));
 		Array<AtlasRegion> frames = context.getAtlas().findRegions("stickmanwalk");
 		animWalk = new Animation(0.1f, frames);
