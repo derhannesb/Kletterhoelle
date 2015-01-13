@@ -17,10 +17,12 @@ public class MovingPlatform extends GameObject {
 	private float dist = 0f;
 	private float maxDist = 100;
 	private float speed = 1f;
+	private float delay = 0;
 	
-	public MovingPlatform(GameContext context, int x, int y, int width, int height, float maxDist) {
+	public MovingPlatform(GameContext context, int x, int y, int width, int height, float maxDist, float delay) {
 		super(context, GameObject.TYPE_GROUND);
 		this.maxDist = maxDist;
+		this.delay = delay;
 		setBounds(x, y, width, height);
 		sprite = new Sprite(context.getAtlas().findRegion("fenster"));
 		
@@ -57,7 +59,8 @@ public class MovingPlatform extends GameObject {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		
+		if (getContext().getTimeElapsed() > delay)
+		{
 		dist += dir.len() * delta;
 		if(dist > maxDist) {
 			dir.y = dir.y * -1;
@@ -65,7 +68,7 @@ public class MovingPlatform extends GameObject {
 		}
 		
 		body.setLinearVelocity(dir);
-		 
+		}
 	}
 
 }

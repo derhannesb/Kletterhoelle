@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,6 +16,7 @@ public class GameContext {
 	public static final float GAME_SPEED =15;
 	public static final float GRAVITY = -50f;
 	public static final float PIXELSPERMETER = 100;
+	public static final int CONTROLLER_KEYBOARD = 11111;
 	
 	private TextureAtlas atlas = null;
 	private World world = null;
@@ -22,6 +25,7 @@ public class GameContext {
 	private float timeElapsed = 0f;
 	private BitmapFont font = null;
 	
+	
 	public GameContext() {
 		stage = new Stage();
 		world = new World(new Vector2(0,GameContext.GRAVITY), true);
@@ -29,17 +33,17 @@ public class GameContext {
 		atlas = new TextureAtlas("atlas/kletterhoelle.pack");
 		timeElapsed = 0f;
 		
-		/*
+		
 		font = new BitmapFont(Gdx.files.internal("fonts/roboto.fnt"));
-		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ariblk.ttf"));
+		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto-Bold.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 24;
+		parameter.size = 28;
 		font = gen.generateFont(parameter);
 		
         font.setColor(Color.GREEN);
-        */
-		font = new BitmapFont(Gdx.files.internal("fonts/SHOWG-24.fnt"));
-		font.setColor(Color.BLACK);
+        
+		//font = new BitmapFont(Gdx.files.internal("fonts/SHOWG-24.fnt"));
+		//font.setColor(Color.BLACK);
 	}
 
 	public Stage getStage() {

@@ -2,6 +2,7 @@ package de.johannesbade.kletterhoelle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -60,8 +61,11 @@ public class Stickman extends GameObject{
 	
 	private int controllerID = 0;
 	
-	public Stickman(GameContext context, float x, float y) {
+	
+	public Stickman(GameContext context, float x, float y, Color color) {
 		super(context, GameObject.TYPE_PLAYER);
+	
+		
 		sprite = new Sprite(context.getAtlas().findRegion("stickmanwalk"));
 		Array<AtlasRegion> frames = context.getAtlas().findRegions("stickmanwalk");
 		animWalk = new Animation(0.1f, frames);
@@ -75,7 +79,7 @@ public class Stickman extends GameObject{
 		animStand = new Animation(0.5f, frames);
 		animStand.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
 		
-				
+		setColor(color);
 		animation = animStand;
 		
 		setWidth(sprite.getWidth());
@@ -113,6 +117,7 @@ public class Stickman extends GameObject{
 		body.setUserData(this);
 		updateBounds();
 		
+		sprite.setColor(color);
 		
 	}
 	
@@ -212,14 +217,15 @@ public class Stickman extends GameObject{
 	}
 	
 	
-	public void key(int keyCode, boolean pressed)
+	public boolean  key(int keyCode, boolean pressed)
 	{
-		
 		if (keyCode == key_left) key_left_pressed = pressed;
 		if (keyCode == key_right) key_right_pressed = pressed;
 		if (keyCode == key_jump) {
 			if (pressed && grounded) jump = true;		
 		}
+		if (keyCode == key_left || keyCode == key_right || keyCode == key_jump) return true;
+			else return false;
 	}
 	
 	public boolean button(int controllerID, int button, boolean pressed)
@@ -242,6 +248,7 @@ public class Stickman extends GameObject{
 	}
 
 	public void setGroundedPlattform(GameObject groundedPlattform) {
+		if (groundedPlattform != null) grounded = true;
 		this.groundedPlattform = groundedPlattform;
 	}
 

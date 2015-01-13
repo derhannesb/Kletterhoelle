@@ -10,6 +10,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -45,6 +46,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	private Array<Stickman> stickmen = null;
 	private Iterator<Stickman> itStickman = null;
 	
+	private Array<Color> playerColors = null;
+	
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
@@ -53,16 +56,15 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	
 	public void addPlayer()
 	{
-		Stickman stickman = new Stickman(context,MathUtils.random(200,1700), 1200);
-		//if (stickmen.size > 0) stickman.setKeys(Keys.J, Keys.L, Keys.I, "Keyboard");
-		stickmen.add(stickman);
-		context.getStage().addActor(stickman);
+		addPlayer(Keys.A, Keys.D, Keys.W,GameContext.CONTROLLER_KEYBOARD);
 	}
 	
 	public void addPlayer(int left, int right, int jump, int controllerID)
 	{
-		Stickman stickman = new Stickman(context,MathUtils.random(200,1700), 1200);
-		if (stickmen.size > 0) stickman.setKeys(left, right, jump, controllerID);
+		Color color = Color.BLACK;
+		if (playerColors.size > 0) color = playerColors.pop();
+		Stickman stickman = new Stickman(context, 500+MathUtils.random(0, 800), 1200, color);
+		stickman.setKeys(left, right, jump, controllerID);
 		stickmen.add(stickman);
 		context.getStage().addActor(stickman);
 	}
@@ -74,36 +76,52 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		batch = new SpriteBatch();
 		stickmen = new Array<Stickman>();
 		
-		
+		playerColors = new Array<Color>();
+		playerColors.add(Color.GRAY);
+		playerColors.add(Color.LIGHT_GRAY);
+		playerColors.add(Color.MAROON);
+		playerColors.add(Color.YELLOW);
+		playerColors.add(Color.PINK);
+		playerColors.add(Color.PURPLE);
+		playerColors.add(Color.TEAL);
+		playerColors.add(Color.NAVY);
+		playerColors.add(Color.MAGENTA);
+		playerColors.add(Color.RED);
+		playerColors.add(Color.BLUE);
+		playerColors.add(Color.GREEN);
+		playerColors.add(Color.ORANGE);
+		playerColors.add(Color.BLACK);
 		
 		spawnPositions = new Array<Vector2>();
-		spawnPositions.add(new Vector2(1100,160+1006));
-		spawnPositions.add(new Vector2(500,160+979));
-		spawnPositions.add(new Vector2(1680,160+974));
+		spawnPositions.add(new Vector2(1100,160+950));
+		spawnPositions.add(new Vector2(1680,160+950));
 		spawnPositions.add(new Vector2(1600,160+486));
 		spawnPositions.add(new Vector2(838,160+555));
 		spawnPositions.add(new Vector2(590,160+490));
-		spawnPositions.add(new Vector2(296,160+343));
 		
 		//Fenster der Kletterhalle
 		context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
-		context.getStage().addActor(new Fenster(context, 1111, 240,1140,220));
+		context.getStage().addActor(new Fenster(context, 1111, 220,1140,220));
 		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
 		
 		//Zusaetzliche Plattformen
-		context.getStage().addActor(new MovingPlatform(context,540, 120,111,220,2));
-		context.getStage().addActor(new MovingPlatform(context,-100, 500,180,220,3));
-		context.getStage().addActor(new MovingPlatform(context,910, 120,150,220, 2));
+		context.getStage().addActor(new Fenster(context,280, 766,200,820));
+		context.getStage().addActor(new MovingPlatform(context,680, 120,111,220,2, 1));
+		context.getStage().addActor(new MovingPlatform(context,990, 120,150,220, 2, 0));
+		
+		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,120,3, 2));
+		
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+		camera.position.y += 50;
+		camera.position.x += 400;
 		
 		spawnCoin();
 
 		//Spieler
 		
-		addPlayer();
+		//addPlayer();
 		
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-		camera.position.y += 200;
 		
 		cameraHUD = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cameraHUD.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
@@ -114,7 +132,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		Controllers.addListener(this);
 		
 		debugRenderer = new Box2DDebugRenderer();
-		
 		
 	}
 	
@@ -138,9 +155,10 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 								context.getWorld().destroyBody(tmpBody);
 								spawnCoin();
 							}
+						//Wenn der Spieler unten aus dem Bild fällt respawnen:
 						if (go.getType() == GameObject.TYPE_PLAYER &&  go.getBody().getPosition().y  < -100)
 						{
-							go.getBody().setTransform(1200/GameContext.PIXELSPERMETER, 1500/GameContext.PIXELSPERMETER, 0);
+							go.getBody().setTransform(800/GameContext.PIXELSPERMETER, 1600/GameContext.PIXELSPERMETER, 0);
 							go.getBody().setLinearVelocity(0, 0);
 						}
 					}
@@ -183,11 +201,16 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		batch.begin();
 		
 		itStickman = stickmen.iterator();
-		int snr = 0;
+		int snr = -1;
+		String str;
 		while (itStickman.hasNext())
 		{
 			Stickman sTmp = itStickman.next();
-			context.getFont().draw(batch,"P " +(snr++)+": "+sTmp.getScore(), 30, cameraHUD.viewportHeight-10 - (24*snr) );
+			str = "Spieler " +((snr++)+1)+": "+sTmp.getScore();
+			context.getFont().setColor(Color.WHITE);
+			context.getFont().draw(batch,str, 28, cameraHUD.viewportHeight-12 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
+			context.getFont().setColor(sTmp.getColor());
+			context.getFont().draw(batch,str, 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
 		}
 			
 		batch.end();
@@ -210,7 +233,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			case Keys.DOWN: key_down_pressed = true;
 			break;
 		}
-		
 		
 		itStickman = stickmen.iterator();
 		while (itStickman.hasNext())
@@ -237,10 +259,18 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		}
 		
 		itStickman = stickmen.iterator();
+		boolean keyAssigned = false;
 		while (itStickman.hasNext())
 		{
-			itStickman.next().key(keycode, false);
+			Stickman sTmp = itStickman.next();
+			keyAssigned = sTmp.key(keycode, false);
 		}
+		if (!keyAssigned)
+		{
+			addPlayer(-1,-2, keycode, GameContext.CONTROLLER_KEYBOARD);
+		}
+		
+		
 		
 		return false;
 	}
@@ -308,6 +338,14 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		if (contact.isTouching())
 		{
+			if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER) && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
+			{
+				Stickman smA = (Stickman) contact.getFixtureA().getBody().getUserData();
+				Stickman smB = (Stickman) contact.getFixtureA().getBody().getUserData();
+				smA.setGroundedPlattform(smA);
+				smB.setGroundedPlattform(smA);
+			}
+			
 			if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureA().getBody().getUserData();
@@ -392,8 +430,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			if (!controllerAssigned) controllerAssigned = sTmp.button(controller.hashCode(), buttonCode, false);
 			if (controllerAssigned)
 			{
-				if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode) sTmp.setKey_left(buttonCode);
-				else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode) sTmp.setKey_right(buttonCode);
+				if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode && sTmp.getKey_left() != buttonCode) sTmp.setKey_left(buttonCode);
+				else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode && sTmp.getKey_right() != buttonCode) sTmp.setKey_right(buttonCode);
 			}
 			
 		}
