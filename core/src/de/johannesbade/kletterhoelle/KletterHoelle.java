@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.Array;
 public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
 	private SpriteBatch batch;
 	private OrthographicCamera camera = null;
+	private OrthographicCamera cameraHUD = null;
 	private GameContext context = null;
 	
 	private Box2DDebugRenderer debugRenderer;
@@ -43,7 +44,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	
 	private Array<Stickman> stickmen = null;
 	private Iterator<Stickman> itStickman = null;
-	
 	
 	public void spawnCoin()
 	{
@@ -74,6 +74,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		batch = new SpriteBatch();
 		stickmen = new Array<Stickman>();
 		
+		
+		
 		spawnPositions = new Array<Vector2>();
 		spawnPositions.add(new Vector2(1100,160+1006));
 		spawnPositions.add(new Vector2(500,160+979));
@@ -103,6 +105,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		camera.position.y += 200;
 		
+		cameraHUD = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cameraHUD.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		
 		context.getWorld().setContactListener(this);
 		
@@ -110,19 +114,12 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		Controllers.addListener(this);
 		
 		debugRenderer = new Box2DDebugRenderer();
+		
+		
 	}
-
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		context.setTimeElapsed(context.getTimeElapsed()+Gdx.graphics.getDeltaTime());
-		
-		camera.update();
-		context.getStage().getCamera().position.x = camera.position.x;
-		context.getStage().getCamera().position.y = camera.position.y;
-		
+	
+	public void box2dstuff()
+	{
 		Array<Body> bodies = new Array<Body>();
 		if (context.getWorld().getBodyCount() > 0)
 		{
@@ -150,6 +147,20 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 				}
 			}
 		}
+	}
+
+	@Override
+	public void render () {
+		Gdx.gl.glClearColor(1, 1,1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		context.setTimeElapsed(context.getTimeElapsed()+Gdx.graphics.getDeltaTime());
+		
+		camera.update();
+		context.getStage().getCamera().position.x = camera.position.x;
+		context.getStage().getCamera().position.y = camera.position.y;
+		
+		box2dstuff(); // vor world.step ausfuehren!
 		
 		context.getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
 		context.getStage().act();	
@@ -164,9 +175,26 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 			context.getStage().draw();
+			
 		batch.end();
 		
-		debugRenderer.render(context.getWorld(), cam.scl(GameContext.PIXELSPERMETER));
+		cameraHUD.update();
+		batch.setProjectionMatrix(cameraHUD.combined);
+		batch.begin();
+		
+		itStickman = stickmen.iterator();
+		int snr = 0;
+		while (itStickman.hasNext())
+		{
+			Stickman sTmp = itStickman.next();
+			context.getFont().draw(batch,"P " +(snr++)+": "+sTmp.getScore(), 30, cameraHUD.viewportHeight-10 - (24*snr) );
+		}
+			
+		batch.end();
+		
+		//debugRenderer.render(context.getWorld(), cam.scl(GameContext.PIXELSPERMETER));
+		
+		
 	}
 
 	@Override
@@ -258,22 +286,24 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		if (contact.getFixtureB().getUserData() != null && contact.getFixtureB().getUserData().equals( GameObject.TYPE_COIN )) 
 		{
 			Coin coin = (Coin) contact.getFixtureB().getBody().getUserData();
-			coin.markForRemoval();
-			if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
+			
+			if (!coin.isDestroyed() && contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureA().getBody().getUserData();
 				sTemp.score(1);
 			}
+			coin.markForRemoval();
 		}
 		if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_COIN ))
 		{
 			Coin coin = (Coin) contact.getFixtureA().getBody().getUserData();
-			coin.markForRemoval();
-			if (contact.getFixtureB().getUserData() != null && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
+			
+			if (!coin.isDestroyed() && contact.getFixtureB().getUserData() != null && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureB().getBody().getUserData();
 				sTemp.score(1);
 			}
+			coin.markForRemoval();
 		}
 		
 		if (contact.isTouching())

@@ -1,6 +1,11 @@
 package de.johannesbade.kletterhoelle;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,6 +22,7 @@ public class GameContext {
 	private Stage stage = null;
 	private Array<GameObject> gameObjects = null;
 	private float timeElapsed = 0f;
+	private BitmapFont font = null;
 	
 	public GameContext() {
 		stage = new Stage();
@@ -24,6 +30,18 @@ public class GameContext {
 		gameObjects = new Array<GameObject>();
 		atlas = new TextureAtlas("atlas/kletterhoelle.pack");
 		timeElapsed = 0f;
+		
+		/*
+		font = new BitmapFont(Gdx.files.internal("fonts/roboto.fnt"));
+		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ariblk.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = 24;
+		font = gen.generateFont(parameter);
+		
+        font.setColor(Color.GREEN);
+        */
+		font = new BitmapFont(Gdx.files.internal("fonts/SHOWG-24.fnt"));
+		font.setColor(Color.BLACK);
 	}
 
 	public Stage getStage() {
@@ -65,8 +83,13 @@ public class GameContext {
 	public void setTimeElapsed(float timeElapsed) {
 		this.timeElapsed = timeElapsed;
 	}
-	
-	
-	
+
+	public BitmapFont getFont() {
+		return font;
+	}
+
+	public void setFont(BitmapFont font) {
+		this.font = font;
+	}
 
 }

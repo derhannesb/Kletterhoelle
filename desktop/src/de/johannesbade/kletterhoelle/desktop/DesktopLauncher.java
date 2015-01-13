@@ -12,7 +12,6 @@ public class DesktopLauncher {
 		config.height = 1080;
 		//config.fullscreen = true;
 		
-		
 		new LwjglApplication(new KletterHoelle(), config);
 	}
 }
