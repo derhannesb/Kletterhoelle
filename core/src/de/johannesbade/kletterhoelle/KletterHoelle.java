@@ -91,8 +91,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
 		
 		//Zusaetzliche Plattformen
-		context.getStage().addActor(new Fenster(context,540, 120,111,220));
-		context.getStage().addActor(new Fenster(context,-100, 500,180,220));
+		context.getStage().addActor(new MovingPlatform(context,540, 120,111,220,2));
+		context.getStage().addActor(new MovingPlatform(context,-100, 500,180,220,3));
 		context.getStage().addActor(new MovingPlatform(context,910, 120,150,220, 2));
 		
 		spawnCoin();
