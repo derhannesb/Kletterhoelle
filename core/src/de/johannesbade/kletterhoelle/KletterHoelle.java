@@ -111,12 +111,12 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		//Zusaetzliche Plattformen
 		context.getStage().addActor(new Fenster(context,280, 766,200,820));
-		context.getStage().addActor(new MovingPlatform(context,680, 120,111,220,2, 1));
+		context.getStage().addActor(new MovingPlatform(context,680, 120,111,220,1f, 1));
 		context.getStage().addActor(new MovingPlatform(context,990, 120,150,220, 2, 0));
 		
-		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,120,3, 2));
+		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,60,3, 2));
 		
-		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+940, 1000));
+		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+940+16, 1000, .25f));
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
