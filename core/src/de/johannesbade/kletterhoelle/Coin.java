@@ -14,8 +14,11 @@ public class Coin extends GameObject {
 	public enum CoinType {
 		NORMAL_COIN,
 		KILL_ALL_COIN,
-		LOW_GRAVITY_COIN
+		LOW_GRAVITY_COIN,
+		COLOR_SWITCH_COIN
 	}
+	
+	public static final long KILL_ALL_DURATION = 16;
 	
 	private CoinType coinType = CoinType.NORMAL_COIN;
 	private SpriteAnimation sprite = null;
@@ -29,15 +32,19 @@ public class Coin extends GameObject {
 		
 		switch (coinType) {
 			case NORMAL_COIN:
-				sprite = new SpriteAnimation(context,"normal_coin", 0.25f);
+				sprite = new SpriteAnimation(context, "normal_coin", 0.25f);
 				break;
-				
+			
 			case KILL_ALL_COIN:
-				sprite = new SpriteAnimation(context,"kill_all_coin", 0.125f);
+				sprite = new SpriteAnimation(context, "kill_all_coin", 0.125f);
 				break;
-				
+			
 			case LOW_GRAVITY_COIN:
-				sprite = new SpriteAnimation(context,"low_gravity_coin", 0.25f);
+				sprite = new SpriteAnimation(context, "low_gravity_coin", 0.25f);
+				break;
+			
+			case COLOR_SWITCH_COIN:
+				sprite = new SpriteAnimation(context, "color_switch_coin", 0.25f);
 				break;
 		}
 		

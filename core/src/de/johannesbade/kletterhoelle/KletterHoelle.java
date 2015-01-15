@@ -28,6 +28,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 
 import de.johannesbade.kletterhoelle.Coin.CoinType;
+import de.johannesbade.kletterhoelle.Stickman.Capability;
 
 public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
 	private SpriteBatch batch;
@@ -115,7 +116,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
 		
 		context.getStage().addActor(new Fenster(context, 276, 766, 860, 220));
-		context.getStage().addActor(new Fenster(context, 276+900+100, 766, 960, 220));
+		context.getStage().addActor(new Fenster(context, 276+900+100, 766, 976, 220));
 		
 		context.getStage().addActor(new Fenster(context, 1111, 220,1140,220));
 		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
@@ -159,28 +160,35 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public void box2dstuff()
 	{
 		Array<Body> bodies = new Array<Body>();
+		
 		if (context.getWorld().getBodyCount() > 0)
 		{
 			context.getWorld().getBodies(bodies);
 			itBody = bodies.iterator();
+			
 			if (bodies != null)
 			{
 				while (itBody.hasNext())
 				{
 					Body tmpBody = itBody.next();
+					
 					if (tmpBody.getUserData() instanceof GameObject)
 					{
 						GameObject go = (GameObject) tmpBody.getUserData();
+						
 						if (go.getType() == GameObject.TYPE_REMOVE) 
-							{
-								context.getWorld().destroyBody(tmpBody);
-								spawnCoin();
-							}
-						//Wenn der Spieler unten aus dem Bild f�llt respawnen:
-						if (go.getType() == GameObject.TYPE_PLAYER &&  go.getBody().getPosition().y  < -100)
 						{
-							go.getBody().setTransform(800/GameContext.PIXELSPERMETER, 1600/GameContext.PIXELSPERMETER, 0);
-							go.getBody().setLinearVelocity(0, 0);
+							context.getWorld().destroyBody(tmpBody);
+							spawnCoin();
+						}
+						
+						//Wenn der Spieler unten aus dem Bild f�llt respawnen:
+						if (go.getType() == GameObject.TYPE_PLAYER) {
+							if (go.getBody().getPosition().y  < -100 || ((Stickman) go).isDead()) {
+								go.getBody().setTransform(800/GameContext.PIXELSPERMETER, 1600/GameContext.PIXELSPERMETER, 0);
+								go.getBody().setLinearVelocity(0, 0);
+								((Stickman) go).setAlive();
+							}
 						}
 					}
 				}
@@ -339,10 +347,10 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			
 			if (!coin.isDestroyed() && contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
-				Stickman sTemp = (Stickman) contact.getFixtureA().getBody().getUserData();
-				sTemp.score(1);
+				Stickman stickman = (Stickman) contact.getFixtureA().getBody().getUserData();
+				
+				stickman.beginContäct(coin);
 			}
-			coin.markForRemoval();
 		}
 		if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_COIN ))
 		{
@@ -350,10 +358,10 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			
 			if (!coin.isDestroyed() && contact.getFixtureB().getUserData() != null && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
-				Stickman sTemp = (Stickman) contact.getFixtureB().getBody().getUserData();
-				sTemp.score(1);
+				Stickman stickman = (Stickman) contact.getFixtureB().getBody().getUserData();
+				
+				stickman.beginContäct(coin);
 			}
-			coin.markForRemoval();
 		}
 		
 		if (contact.isTouching())
@@ -362,6 +370,9 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			{
 				Stickman smA = (Stickman) contact.getFixtureA().getBody().getUserData();
 				Stickman smB = (Stickman) contact.getFixtureA().getBody().getUserData();
+				
+				smA.beginContäct(smB);
+				
 				smA.setGroundedPlattform(smA);
 				smB.setGroundedPlattform(smA);
 			}
@@ -370,22 +381,20 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureA().getBody().getUserData();
 				if ( contact.getFixtureB().getUserData().equals(GameObject.TYPE_GROUND) && contact.getFixtureB().getBody().getPosition().y < sTemp.getBody().getPosition().y)
-					{
-						
-						sTemp.setGrounded(true);
-						sTemp.setGroundedPlattform( (GameObject) contact.getFixtureB().getBody().getUserData());
-					}
+				{
+					sTemp.setGrounded(true);
+					sTemp.setGroundedPlattform( (GameObject) contact.getFixtureB().getBody().getUserData());
+				}
 				
 			}
 			if (contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureB().getBody().getUserData();
 				if (contact.getFixtureA().getUserData().equals(GameObject.TYPE_GROUND) && contact.getFixtureA().getBody().getPosition().y < sTemp.getBody().getPosition().y)
-					{
-						
-						sTemp.setGrounded(true);
-						sTemp.setGroundedPlattform( (GameObject) contact.getFixtureB().getBody().getUserData());
-					}
+				{
+					sTemp.setGrounded(true);
+					sTemp.setGroundedPlattform( (GameObject) contact.getFixtureB().getBody().getUserData());
+				}
 			}
 		}
 	}

@@ -15,11 +15,18 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 
-public class Stickman extends GameObject{
-
+public class Stickman extends GameObject {
+	public enum Capability {
+		NO_CAPABILITY,
+		KILL_ALL_CAPABILITY,
+		HOVER_CAPABILITY
+	}
+	
+	private Capability capability;
 	private Sprite sprite;
 	
 	private int score = 0;
+	private boolean deadness = false;
 		
 	public static final int STOP = 0;
 	public static final int LEFT = -1;
@@ -29,7 +36,6 @@ public class Stickman extends GameObject{
 	public static final float BASE_JUMP_ACC = 550;
 	public static final float MAX_VELOCITY = BASE_SPEED*3f;
 	public static final float DAMPENING = .7f;
-	
 	
 	private Fixture physicsFixture = null;
 	private Fixture sensorFixture = null;
@@ -46,7 +52,9 @@ public class Stickman extends GameObject{
 	//private boolean key_jump_pressed = false;
 	
 	private float stillTime = 0;
-	long lastGroundTime = 0;
+	private long lastGroundTime = 0;
+	
+	private float killAllStartTime = -1;
 	
 	private boolean grounded= false;
 	
@@ -128,6 +136,61 @@ public class Stickman extends GameObject{
 		sprite.draw(batch);
 	}
 	
+	private void handleCoinCollision(Coin coin)
+	{
+		switch (coin.getCoinType()) {
+			case NORMAL_COIN:
+				if (!coin.isDestroyed()) {
+					score(1);
+					coin.markForRemoval();
+				}
+				
+				break;
+			
+			case KILL_ALL_COIN:
+				setCapability(Stickman.Capability.KILL_ALL_CAPABILITY);
+				setKillAllStartTime(getContext().getTimeElapsed());
+				break;
+			
+			case LOW_GRAVITY_COIN:
+				break;
+			
+			case COLOR_SWITCH_COIN:
+				break;
+		}
+	}
+	
+	private void handlePlayerCollision(Stickman stickman) {
+		switch (capability) {
+			case NO_CAPABILITY:
+				if (stickman.getCapability() != Capability.NO_CAPABILITY) {
+					stickman.beginContäct(this);
+				}
+			case KILL_ALL_CAPABILITY:
+				if (stickman.getCapability() == Capability.KILL_ALL_CAPABILITY) {
+					setCapability(Capability.NO_CAPABILITY);
+					stickman.setCapability(capability.NO_CAPABILITY);
+				} else {
+					stickman.kill();
+				}
+			
+			case HOVER_CAPABILITY:
+				break;
+		}
+	}
+	
+	public void beginContäct(GameObject o) {
+		switch (o.getType()) {
+			case TYPE_COIN:
+				handleCoinCollision((Coin) o);
+				break;
+			
+			case TYPE_PLAYER:
+				handlePlayerCollision((Stickman) o);
+				break;
+		}
+	}
+	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
@@ -135,8 +198,6 @@ public class Stickman extends GameObject{
 		
 		vel = body.getLinearVelocity();
 		pos = body.getPosition();
-		
-		
 		
 		if(grounded) {
 			lastGroundTime = System.nanoTime();
@@ -212,7 +273,12 @@ public class Stickman extends GameObject{
 		}
 		
 		if (vel.y > 0.1f && groundedPlattform == null) animation = animJump;
-		 
+		
+		if (getContext().getTimeElapsed() - killAllStartTime > Coin.KILL_ALL_DURATION)
+		{
+			setKillAllStartTime(-1);
+			setCapability(Capability.NO_CAPABILITY);
+		}
 	}
 	
 	
@@ -325,7 +391,32 @@ public class Stickman extends GameObject{
 	public void setKey_jump(int key_jump) {
 		this.key_jump = key_jump;
 	}
+
+	public Capability getCapability() {
+		return capability;
+	}
+
+	public void setCapability(Capability capability) {
+		this.capability = capability;
+	}
+
+	public float getKillAllStartTime() {
+		return killAllStartTime;
+	}
+
+	public void setKillAllStartTime(float killAllStartTime) {
+		this.killAllStartTime = killAllStartTime;
+	}
 	
+	public boolean isDead() {
+		return deadness;
+	}
 	
+	public void kill() {
+		deadness = true;
+	}
 	
+	public void setAlive() {
+		deadness = false;
+	}
 }
