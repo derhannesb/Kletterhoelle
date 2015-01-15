@@ -108,17 +108,87 @@ stickmanwalk
   orig: 64, 128
   offset: 0, 0
   index: 4
-coin
+kill_all_coin
   rotate: false
   xy: 549, 314
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: -1
+  index: 1
+kill_all_coin
+  rotate: false
+  xy: 95, 41
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 2
+kill_all_coin
+  rotate: false
+  xy: 615, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 3
+kill_all_coin
+  rotate: false
+  xy: 681, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 4
+kill_all_coin
+  rotate: false
+  xy: 747, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 5
+kill_all_coin
+  rotate: false
+  xy: 813, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 6
+kill_all_coin
+  rotate: false
+  xy: 879, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 7
+kill_all_coin
+  rotate: false
+  xy: 945, 314
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 8
 fenster
   rotate: false
-  xy: 95, 43
+  xy: 455, 230
   size: 64, 64
   orig: 64, 64
+  offset: 0, 0
+  index: -1
+kill_all_coin
+  rotate: false
+  xy: 257, 186
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 9
+kill_all_coin
+  rotate: false
+  xy: 323, 186
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 10
+normal_coin
+  rotate: false
+  xy: 389, 186
+  size: 64, 66
+  orig: 64, 66
   offset: 0, 0
   index: -1

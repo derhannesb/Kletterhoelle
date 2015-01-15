@@ -1,7 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -19,7 +18,7 @@ public class Coin extends GameObject {
 	}
 	
 	private CoinType coinType = CoinType.NORMAL_COIN;
-	private Sprite sprite = null;
+	private SpriteAnimation sprite = null;
 	
 	private boolean destroyed = false;
 	
@@ -30,15 +29,15 @@ public class Coin extends GameObject {
 		
 		switch (coinType) {
 			case NORMAL_COIN:
-				sprite = new Sprite(context.getAtlas().findRegion("normal_coin"));
+				sprite = new SpriteAnimation(context,"normal_coin", 0.25f);
 				break;
 				
 			case KILL_ALL_COIN:
-				sprite = new Sprite(context.getAtlas().findRegion("kill_all_coin"));
+				sprite = new SpriteAnimation(context,"kill_all_coin", 0.125f);
 				break;
 				
 			case LOW_GRAVITY_COIN:
-				sprite = new Sprite(context.getAtlas().findRegion("low_gravity_coin"));
+				sprite = new SpriteAnimation(context,"low_gravity_coin", 0.25f);
 				break;
 		}
 		

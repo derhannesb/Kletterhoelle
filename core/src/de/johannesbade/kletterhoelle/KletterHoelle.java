@@ -27,6 +27,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 
+import de.johannesbade.kletterhoelle.Coin.CoinType;
+
 public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
 	private SpriteBatch batch;
 	private OrthographicCamera camera = null;
@@ -54,7 +56,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
-		context.getStage().addActor(new Coin(context, newPos.x, newPos.y));
+		context.getStage().addActor(new Coin(context, newPos.x, newPos.y, CoinType.NORMAL_COIN));
 	}
 	
 	public void addPlayer()
