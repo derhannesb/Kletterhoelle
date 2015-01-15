@@ -30,6 +30,7 @@ public class Stickman extends GameObject{
 	public static final float MAX_VELOCITY = BASE_SPEED*3f;
 	public static final float DAMPENING = .7f;
 	
+	
 	private Fixture physicsFixture = null;
 	private Fixture sensorFixture = null;
 	
@@ -230,10 +231,18 @@ public class Stickman extends GameObject{
 	{
 		if (controllerID == this.controllerID)
 		{
-			if (button == key_left) key_left_pressed = pressed;
-			if (button == key_right) key_right_pressed = pressed;
-			if (button == key_jump) {
-				if (pressed && grounded) jump = true;		
+			if (button != GameContext.POV_CENTER)
+			{
+				if (button == key_left) key_left_pressed = pressed;
+				if (button == key_right) key_right_pressed = pressed;
+				if (button == key_jump) {
+					if (pressed && grounded) jump = true;		
+				}
+			}
+			else
+			{
+				key_left_pressed = false;
+				key_right_pressed = false;
 			}
 			return true;
 		}

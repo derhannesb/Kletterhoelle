@@ -17,7 +17,7 @@ public class GameContext {
 	public static final float GRAVITY = -50f;
 	public static final float PIXELSPERMETER = 100;
 	public static final int CONTROLLER_KEYBOARD = 11111;
-	
+	public static final int POV_CENTER = -90000;
 	private TextureAtlas atlas = null;
 	private World world = null;
 	private Stage stage = null;

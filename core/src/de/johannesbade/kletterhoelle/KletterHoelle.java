@@ -1,5 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -48,6 +49,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	
 	private Array<Color> playerColors = null;
 	
+	private HashMap<String, Integer> hmPseudoButtons = null;
+	
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
@@ -67,8 +70,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		stickman.setKeys(left, right, jump, controllerID);
 		stickmen.add(stickman);
 		context.getStage().addActor(stickman);
-		
-		
 	}
 	
 	
@@ -77,6 +78,14 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		context = new GameContext();
 		batch = new SpriteBatch();
 		stickmen = new Array<Stickman>();
+		
+		//Map POV-Inputs to Pseudobuttons
+		hmPseudoButtons = new HashMap<String, Integer>();
+		hmPseudoButtons.put(PovDirection.center.toString(), -90000);
+		hmPseudoButtons.put(PovDirection.west.toString(), 90001);
+		hmPseudoButtons.put(PovDirection.east.toString(), 90002);
+		hmPseudoButtons.put(PovDirection.north.toString(), 90003);
+		hmPseudoButtons.put(PovDirection.south.toString(), 90004);
 		
 		playerColors = new Array<Color>();
 		playerColors.add(Color.GRAY);
@@ -438,13 +447,17 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			Stickman sTmp = itStickman.next(); 
 			if (!controllerAssigned) controllerAssigned = sTmp.button(controller.hashCode(), buttonCode, false);
 			if (controllerAssigned)
-			{
-				if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode && sTmp.getKey_left() != buttonCode) sTmp.setKey_left(buttonCode);
-				else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode && sTmp.getKey_right() != buttonCode) sTmp.setKey_right(buttonCode);
+			{				
+				if (buttonCode != GameContext.POV_CENTER)
+				{
+					if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode && sTmp.getKey_left() != buttonCode) sTmp.setKey_left(buttonCode);
+					else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode && sTmp.getKey_right() != buttonCode) sTmp.setKey_right(buttonCode);
+				}
+				else sTmp.button(controller.hashCode(), buttonCode, false);
 			}
 			
 		}
-		if (!controllerAssigned) addPlayer(-1,-2, buttonCode, controller.hashCode());
+		if (!controllerAssigned && buttonCode != GameContext.POV_CENTER) addPlayer(-1,-2, buttonCode, controller.hashCode());
 		
 		return false;
 	}
@@ -458,7 +471,13 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	@Override
 	public boolean povMoved(Controller controller, int povCode,
 			PovDirection value) {
-		// TODO Auto-generated method stub
+		if (hmPseudoButtons.get(value.toString()) != null)
+		{
+			int pseudoButton = hmPseudoButtons.get(value.toString());
+			//pseudoButton += povCode*10000; //Falls es mehrere POV-Buttons gibt...
+			buttonUp(controller, pseudoButton);
+			buttonDown(controller, pseudoButton);
+		}
 		return false;
 	}
 
