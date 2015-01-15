@@ -114,8 +114,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		//Fenster der Kletterhalle
 		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
 		
-		context.getStage().addActor(new Fenster(context, 276, 766, 950, 220));
-		context.getStage().addActor(new Fenster(context, 276+950+100, 766, 900, 220));
+		context.getStage().addActor(new Fenster(context, 276, 766, 860, 220));
+		context.getStage().addActor(new Fenster(context, 276+900+100, 766, 960, 220));
 		
 		context.getStage().addActor(new Fenster(context, 1111, 220,1140,220));
 		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
@@ -130,7 +130,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,60,3, 2));
 		
-		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+940+16, 1000, .25f, Color.CYAN));
+		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+870+16, 1000, .25f, Color.CYAN));
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
@@ -455,7 +455,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 					if (sTmp.getKey_left() < 0 && sTmp.getKey_jump() != buttonCode && sTmp.getKey_left() != buttonCode) sTmp.setKey_left(buttonCode);
 					else if (sTmp.getKey_right() < 0 && sTmp.getKey_left() != buttonCode && sTmp.getKey_jump() != buttonCode && sTmp.getKey_right() != buttonCode) sTmp.setKey_right(buttonCode);
 				}
-				else sTmp.button(controller.hashCode(), buttonCode, false);
+				sTmp.button(controller.hashCode(), buttonCode, false);
 			}
 			
 		}
