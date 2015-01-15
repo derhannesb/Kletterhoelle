@@ -1,5 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +16,7 @@ public class Fenster extends GameObject{
 		super(context, GameObject.TYPE_GROUND);
 		setBounds(x, y, width, height);
 		sprite = new Sprite(context.getAtlas().findRegion("fenster"));
-		
+		sprite.setColor(Color.BLACK);
 		// Create our body definition
 		BodyDef bodyDef =new BodyDef();  
 		// Set its world position

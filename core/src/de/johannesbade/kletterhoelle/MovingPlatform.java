@@ -1,5 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -24,8 +25,8 @@ public class MovingPlatform extends GameObject {
 		this.maxDist = maxDist;
 		this.delay = delay;
 		setBounds(x, y, width, height);
-		sprite = new Sprite(context.getAtlas().findRegion("fenster"));
-		
+		sprite = new Sprite(context.getAtlas().findRegion("platform"));
+		sprite.setColor(Color.BLACK);
 		BodyDef def = new BodyDef();
 		def.type = BodyType.KinematicBody;
 		def.position.set( (x-width/2)/GameContext.PIXELSPERMETER, (y+height/2)/GameContext.PIXELSPERMETER);
@@ -71,4 +72,13 @@ public class MovingPlatform extends GameObject {
 		}
 	}
 
+	public Sprite getSprite() {
+		return sprite;
+	}
+
+	public void setSprite(Sprite sprite) {
+		this.sprite = sprite;
+	}
+
+	
 }

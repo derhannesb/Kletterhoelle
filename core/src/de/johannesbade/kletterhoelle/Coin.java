@@ -20,6 +20,7 @@ public class Coin extends GameObject{
 	public Coin(GameContext context, float x, float y) {
 		super(context, GameObject.TYPE_COIN);
 		sprite = new Sprite(context.getAtlas().findRegion("coin")); 
+		sprite.setScale(2);
 		setBounds(x, y, sprite.getWidth(), sprite.getHeight());
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.StaticBody;
