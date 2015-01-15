@@ -11,20 +11,44 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 
 
-public class Coin extends GameObject{
-
+public class Coin extends GameObject {
+	public enum CoinType {
+		NORMAL_COIN,
+		KILL_ALL_COIN,
+		LOW_GRAVITY_COIN
+	}
+	
+	private CoinType coinType = CoinType.NORMAL_COIN;
 	private Sprite sprite = null;
 	
 	private boolean destroyed = false;
 	
-	public Coin(GameContext context, float x, float y) {
+	public Coin(GameContext context, float x, float y, CoinType coinType) {
 		super(context, GameObject.TYPE_COIN);
-		sprite = new Sprite(context.getAtlas().findRegion("coin")); 
+		
+		this.setCoinType(coinType);
+		
+		switch (coinType) {
+			case NORMAL_COIN:
+				sprite = new Sprite(context.getAtlas().findRegion("normal_coin"));
+				break;
+				
+			case KILL_ALL_COIN:
+				sprite = new Sprite(context.getAtlas().findRegion("kill_all_coin"));
+				break;
+				
+			case LOW_GRAVITY_COIN:
+				sprite = new Sprite(context.getAtlas().findRegion("low_gravity_coin"));
+				break;
+		}
+		
 		sprite.setScale(2);
+		
 		setBounds(x, y, sprite.getWidth(), sprite.getHeight());
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.StaticBody;
 		bodyDef.position.set(getX()/GameContext.PIXELSPERMETER, getY()/GameContext.PIXELSPERMETER);
+		
 		body = context.getWorld().createBody(bodyDef);
 		
 		// Create a circle shape and set its radius to 6
@@ -40,29 +64,30 @@ public class Coin extends GameObject{
 		fixture.setSensor(true);
 		fixture.setUserData(GameObject.TYPE_COIN);
 		circle.dispose();
+		
 		body.setUserData(this);
 	}
 	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		if (!destroyed)
+		
+		if (!destroyed) {
 			sprite.rotate(delta*-40f);
+		}
 	}
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
-		if (!destroyed)
-		{
-		sprite.setPosition(body.getPosition().x*GameContext.PIXELSPERMETER -getWidth()/2, body.getPosition().y*GameContext.PIXELSPERMETER -getHeight());
-		sprite.draw(batch);
-		}
 		
+		if (!destroyed) {
+			sprite.setPosition(body.getPosition().x*GameContext.PIXELSPERMETER -getWidth()/2, body.getPosition().y*GameContext.PIXELSPERMETER -getHeight());
+			sprite.draw(batch);
+		}
 	}
 	
-	public void markForRemoval()
-	{
+	public void markForRemoval() {
 		destroyed = true;
 		setDestroyed(true);
 	}
@@ -73,10 +98,15 @@ public class Coin extends GameObject{
 
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
+		
 		setType(TYPE_REMOVE);
 	}
-	
-	
-	
 
+	public CoinType getCoinType() {
+		return coinType;
+	}
+
+	public void setCoinType(CoinType coinType) {
+		this.coinType = coinType;
+	}
 }
