@@ -174,6 +174,12 @@ public class Stickman extends GameObject {
 				break;
 			
 			case COLOR_SWITCH_COIN:
+				if (!coin.isDestroyed())
+				{
+					System.out.println("COLORSWITCHER");
+					coin.markForRemoval();
+				}
+				
 				break;
 		}
 	}
@@ -294,6 +300,7 @@ public class Stickman extends GameObject {
 		if (vel.y > 0.1f && groundedPlattform == null) animation = animJump;
 
 		
+		if (capability == Capability.NO_CAPABILITY) sprite.setAlpha(1f);		
 		if (capability == Capability.KILL_ALL_CAPABILITY && getContext().getTimeElapsed() - killAllStartTime > Coin.KILL_ALL_DURATION)
 		{
 			setKillAllStartTime(-1);
@@ -442,6 +449,8 @@ public class Stickman extends GameObject {
 	}
 	
 	public void setAlive() {
+		killAllStartTime = -1;
+		capability = Capability.NO_CAPABILITY;
 		deadness = false;
 	}
 }

@@ -14,8 +14,8 @@ public class Coin extends GameObject {
 	public enum CoinType {
 		NORMAL_COIN,
 		KILL_ALL_COIN,
-		LOW_GRAVITY_COIN,
-		COLOR_SWITCH_COIN
+		COLOR_SWITCH_COIN,
+		LOW_GRAVITY_COIN;
 	}
 	
 	public static final long KILL_ALL_DURATION = 8;

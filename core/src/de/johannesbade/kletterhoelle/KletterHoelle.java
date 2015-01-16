@@ -55,7 +55,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
 		
-		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-3)]));
+		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-2)]));
 	}
 	
 	public void addPlayer()
@@ -106,9 +106,11 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		spawnPositions = new Array<Vector2>();
 		spawnPositions.add(new Vector2(1680,160+950));
-		spawnPositions.add(new Vector2(1600,160+486));
-		spawnPositions.add(new Vector2(838,160+555));
+		spawnPositions.add(new Vector2(1600,160+490));
 		spawnPositions.add(new Vector2(590,160+490));
+		spawnPositions.add(new Vector2(900,160+490));
+		spawnPositions.add(new Vector2(838,160+555));
+		
 		
 		//Fenster der Kletterhalle
 		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
