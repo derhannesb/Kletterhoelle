@@ -313,9 +313,9 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			{
 				String str = "Spieler " +((snr++)+1)+": "+stickman.getScore();
 				context.getFontBig().setColor(Color.WHITE);
-				context.getFontBig().draw(batch,str, cameraHUD.viewportWidth/2 - 28, cameraHUD.viewportHeight-12 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
+				context.getFontBig().draw(batch,str, cameraHUD.viewportWidth/2 - 28, cameraHUD.viewportHeight-22 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*1.5f*snr));
 				context.getFontBig().setColor(stickman.getColor());
-				context.getFontBig().draw(batch,str,  cameraHUD.viewportWidth/2 - 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
+				context.getFontBig().draw(batch,str,  cameraHUD.viewportWidth/2 - 30, cameraHUD.viewportHeight-20 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*1.5f*snr));
 			}
 			
 		}
