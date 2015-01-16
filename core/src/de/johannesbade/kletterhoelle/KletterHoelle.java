@@ -52,12 +52,15 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 
 	private HashMap<String, Integer> hmPseudoButtons = null;
 	
+	private int[] coinDistribution = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2
+	};
 	
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
 		
-		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-2)]));
+		context.getStage().addActor(new Coin(context, newPos.x, newPos.y, Coin.CoinType.values()[coinDistribution[MathUtils.random(0, coinDistribution.length - 1)]]));
 	}
 	
 	public void addPlayer()

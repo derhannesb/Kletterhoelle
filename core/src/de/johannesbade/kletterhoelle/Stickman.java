@@ -204,7 +204,9 @@ public class Stickman extends GameObject {
 				if (stickman.getCapability() != Capability.NO_CAPABILITY) {
 					//stickman.beginContact(this);
 				}
+				
 				break;
+			
 			case KILL_ALL_CAPABILITY:
 				if (stickman.getCapability() == Capability.KILL_ALL_CAPABILITY) {
 					setCapability(Capability.NO_CAPABILITY);
@@ -212,7 +214,9 @@ public class Stickman extends GameObject {
 				} else {
 					stickman.kill();
 				}
+				
 				break;
+			
 			case HOVER_CAPABILITY:
 				break;
 		}
