@@ -25,7 +25,12 @@ public class GameContext {
 	private Array<GameObject> gameObjects = null;
 	private float timeElapsed = 0f;
 	private BitmapFont font = null;
+	private BitmapFont fontBig = null;
 	
+	public static final int GS_RUNNING = 1;
+	public static final int GS_HIGHSCORE = 2;
+	
+	private int gamestate = GS_RUNNING;
 	
 	
 	public GameContext() {
@@ -43,6 +48,12 @@ public class GameContext {
 		font = gen.generateFont(parameter);
 		
         font.setColor(Color.GREEN);
+        
+        fontBig = new BitmapFont(Gdx.files.internal("fonts/roboto.fnt"));
+		gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto-Bold.ttf"));
+		parameter = new FreeTypeFontParameter();
+		parameter.size = 48;
+		fontBig = gen.generateFont(parameter);
         
 		//font = new BitmapFont(Gdx.files.internal("fonts/SHOWG-24.fnt"));
 		//font.setColor(Color.BLACK);
@@ -95,5 +106,24 @@ public class GameContext {
 	public void setFont(BitmapFont font) {
 		this.font = font;
 	}
+
+	public int getGamestate() {
+		return gamestate;
+	}
+
+	public void setGamestate(int gamestate) {
+		this.gamestate = gamestate;
+	}
+
+	public BitmapFont getFontBig() {
+		return fontBig;
+	}
+
+	public void setFontBig(BitmapFont fontBig) {
+		this.fontBig = fontBig;
+	}
+	
+	
+	
 
 }

@@ -1,5 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -50,6 +51,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	private Array<Color> playerColors = null;
 
 	private HashMap<String, Integer> hmPseudoButtons = null;
+	
 	
 	public void spawnCoin()
 	{
@@ -144,8 +146,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		//Spieler
 		
 		//addPlayer();
-		
-		
+
 		cameraHUD = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cameraHUD.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		
@@ -176,6 +177,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 				break;
 			}
 		}
+		context.setGamestate(GameContext.GS_RUNNING);
 	}
 	
 	public void box2dstuff()
@@ -236,7 +238,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		box2dstuff(); // vor world.step ausfuehren!
 		
-		act();
+		if (context.getGamestate() == GameContext.GS_RUNNING) act();
 		
 	    Matrix4 cam = context.getStage().getCamera().combined.cpy();
 		
@@ -254,25 +256,54 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		cameraHUD.update();
 		batch.setProjectionMatrix(cameraHUD.combined);
 		batch.begin();
-		
+		if (context.getGamestate() == GameContext.GS_RUNNING)
+		{
 		itStickman = stickmen.iterator();
 		int snr = -1;
 		String str;
 		while (itStickman.hasNext())
 		{
-			Stickman sTmp = itStickman.next();
-			str = "Spieler " +((snr++)+1)+": "+sTmp.getScore();
+			Stickman stickman = itStickman.next();
+			str = "Spieler " +((snr++)+1)+": "+stickman.getScore();
 			context.getFont().setColor(Color.WHITE);
 			context.getFont().draw(batch,str, 28, cameraHUD.viewportHeight-12 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
-			context.getFont().setColor(sTmp.getColor());
+			context.getFont().setColor(stickman.getColor());
 			context.getFont().draw(batch,str, 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
 		}
 				
-		if (GameContext.TIME_UP-context.getTimeElapsed() <= 0) restartGame();
+		if (GameContext.TIME_UP-context.getTimeElapsed() <= 0)
+			{
+				context.setGamestate(GameContext.GS_HIGHSCORE);
+				//restartGame();
+				
+			}
 		if (GameContext.TIME_UP-context.getTimeElapsed() <= 10) context.getFont().setColor(Color.RED);	
 			else context.getFont().setColor(Color.GREEN);	
 		
 		context.getFont().draw(batch, ""+ MathUtils.round(GameContext.TIME_UP-context.getTimeElapsed()), cameraHUD.viewportWidth/2, cameraHUD.viewportHeight-40);
+		}
+		
+		if (context.getGamestate() == GameContext.GS_HIGHSCORE)
+		{
+			stickmen.sort(new Comparator<Stickman>() {
+
+				@Override
+				public int compare(Stickman o1, Stickman o2) {
+					return o2.getScore()-o1.getScore();
+				}
+			});
+			int snr = -1;
+			for (Stickman stickman : stickmen)
+			{
+				String str = "Spieler " +((snr++)+1)+": "+stickman.getScore();
+				context.getFontBig().setColor(Color.WHITE);
+				context.getFontBig().draw(batch,str, cameraHUD.viewportWidth/2 - 28, cameraHUD.viewportHeight-12 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
+				context.getFontBig().setColor(stickman.getColor());
+				context.getFontBig().draw(batch,str,  cameraHUD.viewportWidth/2 - 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
+			}
+			
+		}
+		
 		batch.end();
 		
 		//debugRenderer.render(context.getWorld(), cam.scl(GameContext.PIXELSPERMETER));
@@ -316,6 +347,10 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			break;
 			case Keys.DOWN: key_down_pressed = false;
 			break;
+			case Keys.ENTER: 
+				if (context.getGamestate() == GameContext.GS_HIGHSCORE) restartGame();
+			break;
+		
 		}
 		
 		itStickman = stickmen.iterator();
