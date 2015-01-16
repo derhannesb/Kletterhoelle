@@ -32,6 +32,7 @@ public class Dekoration extends Actor {
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
+		sprite.setRotation(getRotation());
 		sprite.setRegion(animation.getKeyFrame(context.getTimeElapsed()));
 		sprite.draw(batch);
 	}

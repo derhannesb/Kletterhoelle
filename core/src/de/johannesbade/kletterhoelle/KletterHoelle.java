@@ -48,7 +48,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	private Iterator<Stickman> itStickman = null;
 	
 	private Array<Color> playerColors = null;
-	
+
 	private HashMap<String, Integer> hmPseudoButtons = null;
 	
 	public void spawnCoin()
@@ -111,6 +111,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		spawnPositions.add(new Vector2(900,160+490));
 		spawnPositions.add(new Vector2(838,160+555));
 		
+
 		
 		//Fenster der Kletterhalle
 		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
@@ -153,8 +154,28 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		Gdx.input.setInputProcessor(this);
 		Controllers.addListener(this);
 		
+		
 		debugRenderer = new Box2DDebugRenderer();
 		
+		restartGame();
+	}
+	
+	public void restartGame()
+	{
+		context.setTimeElapsed(0);
+		context.getWorld().clearForces();
+		//Player zuruecksetzen
+		for (GameObject go : context.getGameObjects())
+		{
+			switch (go.getType())
+			{
+				case GameObject.TYPE_PLAYER:
+					Stickman stickman = (Stickman) go;
+					stickman.kill();
+					stickman.score(-1000000000);
+				break;
+			}
+		}
 	}
 	
 	public void box2dstuff()
@@ -241,7 +262,9 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			context.getFont().setColor(sTmp.getColor());
 			context.getFont().draw(batch,str, 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
 		}
-			
+				
+		context.getFont().setColor(Color.GREEN);	
+		context.getFont().draw(batch, ""+ MathUtils.round(GameContext.TIME_UP-context.getTimeElapsed()), cameraHUD.viewportWidth/2, cameraHUD.viewportHeight-40);
 		batch.end();
 		
 		//debugRenderer.render(context.getWorld(), cam.scl(GameContext.PIXELSPERMETER));

@@ -164,80 +164,94 @@ kill_all_coin
   orig: 64, 66
   offset: 0, 0
   index: 1
-fenster
+clock
   rotate: false
   xy: 747, 248
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-kill_all_coin
+fenster
   rotate: false
-  xy: 813, 246
-  size: 64, 66
-  orig: 64, 66
+  xy: 813, 248
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
-  index: 2
+  index: -1
 kill_all_coin
   rotate: false
   xy: 879, 246
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 3
+  index: 2
 kill_all_coin
   rotate: false
   xy: 945, 246
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 4
+  index: 3
 kill_all_coin
   rotate: false
   xy: 455, 228
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 5
+  index: 4
 kill_all_coin
   rotate: false
   xy: 257, 186
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 6
+  index: 5
 kill_all_coin
   rotate: false
   xy: 323, 186
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 7
+  index: 6
 kill_all_coin
   rotate: false
   xy: 389, 186
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 8
+  index: 7
 kill_all_coin
   rotate: false
   xy: 255, 118
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 9
+  index: 8
 kill_all_coin
   rotate: false
   xy: 321, 118
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 10
-normal_coin
+  index: 9
+kill_all_coin
   rotate: false
   xy: 387, 118
   size: 64, 66
   orig: 64, 66
+  offset: 0, 0
+  index: 10
+normal_coin
+  rotate: false
+  xy: 455, 160
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: -1
+low_gravity_coin
+  rotate: false
+  xy: 453, 93
+  size: 63, 65
+  orig: 63, 65
   offset: 0, 0
   index: -1
