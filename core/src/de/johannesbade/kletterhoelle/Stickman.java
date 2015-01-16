@@ -44,14 +44,8 @@ public class Stickman extends GameObject {
 	private Vector2 vel = null;
 	private Vector2 pos = null;
 	
-	private int key_left = Keys.A;
-	private int key_right = Keys.D;
-	private int key_jump = Keys.W;
-	
-	private boolean key_left_pressed = false;
-	private boolean key_right_pressed = false;
-	//private boolean key_jump_pressed = false;
-	
+	private ControllerConfig cconf = new ControllerConfig();
+
 	private float stillTime = 0;
 	private long lastGroundTime = 0;
 	
@@ -68,9 +62,7 @@ public class Stickman extends GameObject {
 	private Animation animJump = null;
 	
 	private Animation animation = null;
-	
-	private int controllerID = 0;
-	
+
 	private SpriteAnimation effectSprite = null;
 	
 	public Stickman(GameContext context, float x, float y, Color color) {
@@ -177,6 +169,28 @@ public class Stickman extends GameObject {
 				if (!coin.isDestroyed())
 				{
 					System.out.println("COLORSWITCHER");
+					
+					Array<ControllerConfig> cconfs = new Array<ControllerConfig>();
+					
+					for (GameObject go : getContext().getGameObjects()) {
+						if (go.getType() == TYPE_PLAYER) {
+							cconfs.add(((Stickman) go).getControllerConfig());
+							System.out.println("old order: " + ((Stickman) go).getControllerConfig());
+						}
+					}
+					
+					cconfs.shuffle();
+					
+					int i = 0;
+					
+					for (GameObject go : getContext().getGameObjects()) {
+						if (go.getType() == TYPE_PLAYER) {
+							((Stickman) go).setControllerConfig(cconfs.get(i));
+							System.out.println("new order: " + cconfs.get(i));
+							i++;
+						}
+					}
+					
 					coin.markForRemoval();
 				}
 				
@@ -239,7 +253,7 @@ public class Stickman extends GameObject {
 		}
 		
 		// calculate stilltime & damp
-		if (!key_left_pressed && !key_right_pressed)
+		if (!cconf.key_left_pressed && !cconf.key_right_pressed)
 		{
 			stillTime += Gdx.graphics.getDeltaTime();
 			body.setLinearVelocity(vel.x * DAMPENING, vel.y);
@@ -258,7 +272,7 @@ public class Stickman extends GameObject {
 		else
 		{
 
-			if (!key_left_pressed && !key_right_pressed && stillTime > 0.2f)
+			if (!cconf.key_left_pressed && !cconf.key_right_pressed && stillTime > 0.2f)
 			{
 				physicsFixture.setFriction(100f);
 				sensorFixture.setFriction(100f);	
@@ -280,9 +294,9 @@ public class Stickman extends GameObject {
 		}
 		
 		// apply left impulse, but only if max velocity is not reached yet
-		if (key_left_pressed && vel.x > -MAX_VELOCITY) body.applyLinearImpulse(-BASE_SPEED, 0, pos.x , pos.y, true);
+		if (cconf.key_left_pressed && vel.x > -MAX_VELOCITY) body.applyLinearImpulse(-BASE_SPEED, 0, pos.x , pos.y, true);
 		// apply right impulse, but only if max velocity is not reached yet
-		if (key_right_pressed && vel.x < MAX_VELOCITY) body.applyLinearImpulse(BASE_SPEED, 0, pos.x , pos.y, true);
+		if (cconf.key_right_pressed && vel.x < MAX_VELOCITY) body.applyLinearImpulse(BASE_SPEED, 0, pos.x , pos.y, true);
 
 		if (jump) {
 			jump = false;
@@ -316,31 +330,31 @@ public class Stickman extends GameObject {
 	
 	public boolean  key(int keyCode, boolean pressed)
 	{
-		if (keyCode == key_left) key_left_pressed = pressed;
-		if (keyCode == key_right) key_right_pressed = pressed;
-		if (keyCode == key_jump) {
+		if (keyCode == cconf.key_left) cconf.key_left_pressed = pressed;
+		if (keyCode == cconf.key_right) cconf.key_right_pressed = pressed;
+		if (keyCode == cconf.key_jump) {
 			if (pressed && grounded) jump = true;		
 		}
-		if (keyCode == key_left || keyCode == key_right || keyCode == key_jump) return true;
+		if (keyCode == cconf.key_left || keyCode == cconf.key_right || keyCode == cconf.key_jump) return true;
 			else return false;
 	}
 	
 	public boolean button(int controllerID, int button, boolean pressed)
 	{
-		if (controllerID == this.controllerID)
+		if (controllerID == this.cconf.controllerID)
 		{
 			if (button != GameContext.POV_CENTER)
 			{
-				if (button == key_left) key_left_pressed = pressed;
-				if (button == key_right) key_right_pressed = pressed;
-				if (button == key_jump) {
+				if (button == cconf.key_left) cconf.key_left_pressed = pressed;
+				if (button == cconf.key_right) cconf.key_right_pressed = pressed;
+				if (button == cconf.key_jump) {
 					if (pressed && grounded) jump = true;		
 				}
 			}
 			else
 			{
-				key_left_pressed = false;
-				key_right_pressed = false;
+				cconf.key_left_pressed = false;
+				cconf.key_right_pressed = false;
 			}
 			return true;
 		}
@@ -394,34 +408,34 @@ public class Stickman extends GameObject {
 	
 	public void setKeys(int left, int right, int jump, int controllerID)
 	{
-		key_left = left;
-		key_right = right;
-		key_jump = jump;
-		this.controllerID = controllerID; 
+		cconf.key_left = left;
+		cconf.key_right = right;
+		cconf.key_jump = jump;
+		this.cconf.controllerID = controllerID; 
 	}
 
 	public int getKey_left() {
-		return key_left;
+		return cconf.key_left;
 	}
 
 	public void setKey_left(int key_left) {
-		this.key_left = key_left;
+		this.cconf.key_left = key_left;
 	}
 
 	public int getKey_right() {
-		return key_right;
+		return cconf.key_right;
 	}
 
 	public void setKey_right(int key_right) {
-		this.key_right = key_right;
+		this.cconf.key_right = key_right;
 	}
 
 	public int getKey_jump() {
-		return key_jump;
+		return cconf.key_jump;
 	}
 
 	public void setKey_jump(int key_jump) {
-		this.key_jump = key_jump;
+		this.cconf.key_jump = key_jump;
 	}
 
 	public Capability getCapability() {
@@ -452,5 +466,13 @@ public class Stickman extends GameObject {
 		killAllStartTime = -1;
 		capability = Capability.NO_CAPABILITY;
 		deadness = false;
+	}
+	
+	public ControllerConfig getControllerConfig() {
+		return cconf;
+	}
+
+	public void setControllerConfig(ControllerConfig cconf) {
+		this.cconf = cconf;
 	}
 }

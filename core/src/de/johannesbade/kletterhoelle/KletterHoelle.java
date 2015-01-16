@@ -378,8 +378,6 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		if (contact.isTouching())
 		{
-
-			
 			if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
 				Stickman sTemp = (Stickman) contact.getFixtureA().getBody().getUserData();
