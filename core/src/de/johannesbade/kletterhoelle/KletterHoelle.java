@@ -216,6 +216,12 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			}
 		}
 	}
+	
+	public void act()
+	{
+		context.getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
+		context.getStage().act();	
+	}
 
 	@Override
 	public void render () {
@@ -230,8 +236,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		
 		box2dstuff(); // vor world.step ausfuehren!
 		
-		context.getWorld().step(Gdx.graphics.getDeltaTime(), 6, 2);
-		context.getStage().act();	
+		act();
 		
 	    Matrix4 cam = context.getStage().getCamera().combined.cpy();
 		
@@ -263,7 +268,10 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			context.getFont().draw(batch,str, 30, cameraHUD.viewportHeight-10 - (context.getFont().getCapHeight()+context.getFont().getLineHeight()*snr));
 		}
 				
-		context.getFont().setColor(Color.GREEN);	
+		if (GameContext.TIME_UP-context.getTimeElapsed() <= 0) restartGame();
+		if (GameContext.TIME_UP-context.getTimeElapsed() <= 10) context.getFont().setColor(Color.RED);	
+			else context.getFont().setColor(Color.GREEN);	
+		
 		context.getFont().draw(batch, ""+ MathUtils.round(GameContext.TIME_UP-context.getTimeElapsed()), cameraHUD.viewportWidth/2, cameraHUD.viewportHeight-40);
 		batch.end();
 		

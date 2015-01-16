@@ -18,7 +18,7 @@ public class GameContext {
 	public static final float PIXELSPERMETER = 100;
 	public static final int CONTROLLER_KEYBOARD = 11111;
 	public static final int POV_CENTER = -90000;
-	public static final float TIME_UP = 120; //Seconds 
+	public static final float TIME_UP = 60; //Seconds 
 	private TextureAtlas atlas = null;
 	private World world = null;
 	private Stage stage = null;
