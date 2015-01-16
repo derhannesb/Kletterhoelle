@@ -26,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
 
 public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
@@ -52,12 +53,17 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 
 	private HashMap<String, Integer> hmPseudoButtons = null;
 	
+	private Dekoration fahnenvorhang = null;
+	
+	private Group groupBackground = null;
+	private Group groupForeground = null;
+	
 	
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
 		
-		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-2)]));
+		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-3)]));
 	}
 	
 	public void addPlayer()
@@ -72,7 +78,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		Stickman stickman = new Stickman(context, 500+MathUtils.random(0, 800), 1200, color);
 		stickman.setKeys(left, right, jump, controllerID);
 		stickmen.add(stickman);
-		context.getStage().addActor(stickman);
+		groupBackground.addActor(stickman);
 	}
 	
 	
@@ -113,33 +119,37 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		spawnPositions.add(new Vector2(900,160+490));
 		spawnPositions.add(new Vector2(838,160+555));
 		
-
+		groupBackground = new Group();
+		groupForeground = new Group();
+		
+		context.getStage().addActor(groupBackground);
+		context.getStage().addActor(groupForeground);
 		
 		//Fenster der Kletterhalle
 		//context.getStage().addActor(new Fenster(context, 276, 766, 1950, 220));
 		
-		context.getStage().addActor(new Fenster(context, 276, 766, 860, 220));
-		context.getStage().addActor(new Fenster(context, 276+900+100, 766, 976, 220));
+		groupBackground.addActor(new Fenster(context, 276, 766, 860, 220));
+		groupBackground.addActor(new Fenster(context, 276+900+100, 766, 976, 220));
 		
-		context.getStage().addActor(new Fenster(context, 1111, 220,1140,220));
-		context.getStage().addActor(new Fenster(context,-728, 110,1141,220));
+		groupBackground.addActor(new Fenster(context, 1111, 220,1140,220));
+		groupBackground.addActor(new Fenster(context,-728, 110,1141,220));
 		
 		//Zusaetzliche Plattformen
-		context.getStage().addActor(new Fenster(context,280, 766,200,820));
+		groupBackground.addActor(new Fenster(context,280, 766,200,820));
 		MovingPlatform mittelgross = new MovingPlatform(context,680, 120,111,220,1f, 1);
 		mittelgross.getSprite().setRegion(context.getAtlas().findRegion("platformtwo"));
-		context.getStage().addActor(mittelgross);
+		groupBackground.addActor(mittelgross);
 		
-		context.getStage().addActor(new MovingPlatform(context,990, 120,150,220, 2, 0));
+		groupBackground.addActor(new MovingPlatform(context,990, 120,150,220, 2, 0));
 		
-		context.getStage().addActor(new MovingPlatform(context,2350, 300,80,60,3, 2));
+		groupBackground.addActor(new MovingPlatform(context,2350, 300,80,60,3, 2));
 		
-		context.getStage().addActor(new Dekoration(context, "pfeilrunter", 276+870+16, 1000, .25f, Color.CYAN));
+		groupBackground.addActor(new Dekoration(context, "pfeilrunter", 276+870+16, 1100, .25f, Color.CYAN));
 		
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-		camera.position.y += 50;
-		camera.position.x += 400;
+		camera.position.y += 150;
+		camera.position.x += 505;
 		
 		spawnCoin();
 
@@ -155,6 +165,9 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		Gdx.input.setInputProcessor(this);
 		Controllers.addListener(this);
 		
+		fahnenvorhang = new Dekoration(context, "fenster", 1892, 441, 1, Color.WHITE);
+		fahnenvorhang.setSize(250, 325);
+		groupForeground.addActor(fahnenvorhang);
 		
 		debugRenderer = new Box2DDebugRenderer();
 		
