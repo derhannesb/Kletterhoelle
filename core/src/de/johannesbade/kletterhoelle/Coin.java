@@ -18,7 +18,7 @@ public class Coin extends GameObject {
 		COLOR_SWITCH_COIN
 	}
 	
-	public static final long KILL_ALL_DURATION = 16;
+	public static final long KILL_ALL_DURATION = 8;
 	
 	private CoinType coinType = CoinType.NORMAL_COIN;
 	private SpriteAnimation sprite = null;

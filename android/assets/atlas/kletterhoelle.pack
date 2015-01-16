@@ -52,142 +52,163 @@ pfeilrunter
   orig: 92, 106
   offset: 0, 0
   index: 5
-stickmanjump
+invincible
   rotate: false
   xy: 549, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 1
-stickmanjump
+invincible
   rotate: false
   xy: 615, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 2
-stickmanstand
+invincible
   rotate: false
   xy: 681, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
-  index: 1
-stickmanstand
+  index: 3
+invincible
   rotate: false
   xy: 747, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
-  index: 2
-stickmanwalk
+  index: 4
+stickmanjump
   rotate: false
   xy: 813, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 1
-stickmanwalk
+stickmanjump
   rotate: false
   xy: 879, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
   index: 2
-stickmanwalk
+stickmanstand
   rotate: false
   xy: 945, 382
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
-  index: 3
-stickmanwalk
+  index: 1
+stickmanstand
   rotate: false
   xy: 189, 87
   size: 64, 128
   orig: 64, 128
   offset: 0, 0
-  index: 4
-kill_all_coin
+  index: 2
+stickmanwalk
   rotate: false
-  xy: 549, 314
-  size: 64, 66
-  orig: 64, 66
+  xy: 549, 252
+  size: 64, 128
+  orig: 64, 128
   offset: 0, 0
   index: 1
+stickmanwalk
+  rotate: false
+  xy: 615, 252
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 2
+stickmanwalk
+  rotate: false
+  xy: 681, 252
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: 3
 kill_all_coin
   rotate: false
   xy: 95, 41
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 2
-kill_all_coin
-  rotate: false
-  xy: 615, 314
-  size: 64, 66
-  orig: 64, 66
-  offset: 0, 0
-  index: 3
-kill_all_coin
-  rotate: false
-  xy: 681, 314
-  size: 64, 66
-  orig: 64, 66
-  offset: 0, 0
-  index: 4
+  index: 1
 kill_all_coin
   rotate: false
   xy: 747, 314
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 5
+  index: 2
 kill_all_coin
   rotate: false
   xy: 813, 314
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 6
+  index: 3
 kill_all_coin
   rotate: false
   xy: 879, 314
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 7
+  index: 4
 kill_all_coin
   rotate: false
   xy: 945, 314
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
-  index: 8
+  index: 5
 fenster
   rotate: false
-  xy: 455, 230
+  xy: 747, 248
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 kill_all_coin
   rotate: false
-  xy: 257, 186
+  xy: 813, 246
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 6
+kill_all_coin
+  rotate: false
+  xy: 879, 246
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 7
+kill_all_coin
+  rotate: false
+  xy: 945, 246
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: 8
+kill_all_coin
+  rotate: false
+  xy: 455, 228
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
   index: 9
 kill_all_coin
   rotate: false
-  xy: 323, 186
+  xy: 257, 186
   size: 64, 66
   orig: 64, 66
   offset: 0, 0
   index: 10
 normal_coin
   rotate: false
-  xy: 389, 186
+  xy: 323, 186
   size: 64, 66
   orig: 64, 66
   offset: 0, 0

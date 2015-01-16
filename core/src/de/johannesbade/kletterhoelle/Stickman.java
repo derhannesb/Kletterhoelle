@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -22,7 +23,7 @@ public class Stickman extends GameObject {
 		HOVER_CAPABILITY
 	}
 	
-	private Capability capability;
+	private Capability capability = Capability.NO_CAPABILITY;
 	private Sprite sprite;
 	
 	private int score = 0;
@@ -70,10 +71,13 @@ public class Stickman extends GameObject {
 	
 	private int controllerID = 0;
 	
+	private SpriteAnimation effectSprite = null;
+	
 	public Stickman(GameContext context, float x, float y, Color color) {
 		super(context, GameObject.TYPE_PLAYER);
-	
+	    effectSprite = new SpriteAnimation(context, "invincible", 0.125f);
 		sprite = new Sprite(context.getAtlas().findRegion("stickmanwalk"));
+		effectSprite.setPosition(x, y);
 		Array<AtlasRegion> frames = context.getAtlas().findRegions("stickmanwalk");
 		animWalk = new Animation(0.1f, frames);
 		animWalk.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
@@ -134,6 +138,14 @@ public class Stickman extends GameObject {
 		sprite.setRegion(animation.getKeyFrame(getContext().getTimeElapsed()) );
 		sprite.setBounds(body.getPosition().x*GameContext.PIXELSPERMETER -getWidth()/2, body.getPosition().y*GameContext.PIXELSPERMETER -getHeight()/1.3f, getWidth(),getHeight());
 		sprite.draw(batch);
+		
+
+		
+		if (capability == Capability.KILL_ALL_CAPABILITY)
+		{
+			effectSprite.setPosition(sprite.getX(), sprite.getY());
+			effectSprite.draw(batch);
+		}
 	}
 	
 	private void handleCoinCollision(Coin coin)
@@ -148,8 +160,14 @@ public class Stickman extends GameObject {
 				break;
 			
 			case KILL_ALL_COIN:
-				setCapability(Stickman.Capability.KILL_ALL_CAPABILITY);
-				setKillAllStartTime(getContext().getTimeElapsed());
+				if (!coin.isDestroyed())
+				{
+					System.out.println("KILLERCOIN");
+					setCapability(Stickman.Capability.KILL_ALL_CAPABILITY);
+					setKillAllStartTime(getContext().getTimeElapsed());
+					coin.markForRemoval();
+				}
+				
 				break;
 			
 			case LOW_GRAVITY_COIN:
@@ -164,22 +182,23 @@ public class Stickman extends GameObject {
 		switch (capability) {
 			case NO_CAPABILITY:
 				if (stickman.getCapability() != Capability.NO_CAPABILITY) {
-					stickman.beginContäct(this);
+					//stickman.beginContact(this);
 				}
+				break;
 			case KILL_ALL_CAPABILITY:
 				if (stickman.getCapability() == Capability.KILL_ALL_CAPABILITY) {
 					setCapability(Capability.NO_CAPABILITY);
-					stickman.setCapability(capability.NO_CAPABILITY);
+					stickman.setCapability(Capability.NO_CAPABILITY);
 				} else {
 					stickman.kill();
 				}
-			
+				break;
 			case HOVER_CAPABILITY:
 				break;
 		}
 	}
 	
-	public void beginContäct(GameObject o) {
+	public void beginContact(GameObject o) {
 		switch (o.getType()) {
 			case TYPE_COIN:
 				handleCoinCollision((Coin) o);
@@ -273,12 +292,18 @@ public class Stickman extends GameObject {
 		}
 		
 		if (vel.y > 0.1f && groundedPlattform == null) animation = animJump;
+
 		
-		if (getContext().getTimeElapsed() - killAllStartTime > Coin.KILL_ALL_DURATION)
+		if (capability == Capability.KILL_ALL_CAPABILITY && getContext().getTimeElapsed() - killAllStartTime > Coin.KILL_ALL_DURATION)
 		{
 			setKillAllStartTime(-1);
 			setCapability(Capability.NO_CAPABILITY);
+			
+			sprite.setAlpha(1f);
 		}
+		
+		if (capability == Capability.KILL_ALL_CAPABILITY) sprite.setAlpha(0.75f+0.25f*MathUtils.sin(getContext().getTimeElapsed()*10));
+
 	}
 	
 	

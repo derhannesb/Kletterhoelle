@@ -27,9 +27,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 
-import de.johannesbade.kletterhoelle.Coin.CoinType;
-import de.johannesbade.kletterhoelle.Stickman.Capability;
-
 public class KletterHoelle extends ApplicationAdapter implements InputProcessor, ContactListener, ControllerListener{
 	private SpriteBatch batch;
 	private OrthographicCamera camera = null;
@@ -57,7 +54,8 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 	public void spawnCoin()
 	{
 		Vector2 newPos = spawnPositions.get(MathUtils.random(spawnPositions.size-1));
-		context.getStage().addActor(new Coin(context, newPos.x, newPos.y, CoinType.NORMAL_COIN));
+		
+		context.getStage().addActor(new Coin(context, newPos.x, newPos.y,Coin.CoinType.values()[MathUtils.random(0, Coin.CoinType.values().length-3)]));
 	}
 	
 	public void addPlayer()
@@ -349,7 +347,7 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			{
 				Stickman stickman = (Stickman) contact.getFixtureA().getBody().getUserData();
 				
-				stickman.beginContäct(coin);
+				stickman.beginContact(coin);
 			}
 		}
 		if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals( GameObject.TYPE_COIN ))
@@ -360,22 +358,25 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 			{
 				Stickman stickman = (Stickman) contact.getFixtureB().getBody().getUserData();
 				
-				stickman.beginContäct(coin);
+				stickman.beginContact(coin);
 			}
+		}
+		
+		if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER) && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
+		{
+			Stickman smA = (Stickman) contact.getFixtureA().getBody().getUserData();
+			Stickman smB = (Stickman) contact.getFixtureB().getBody().getUserData();
+			
+			smA.beginContact(smB);
+			smB.beginContact(smA);
+			
+			smA.setGroundedPlattform(smB);
+			smB.setGroundedPlattform(smA);
 		}
 		
 		if (contact.isTouching())
 		{
-			if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER) && contact.getFixtureB().getUserData().equals( GameObject.TYPE_PLAYER))
-			{
-				Stickman smA = (Stickman) contact.getFixtureA().getBody().getUserData();
-				Stickman smB = (Stickman) contact.getFixtureA().getBody().getUserData();
-				
-				smA.beginContäct(smB);
-				
-				smA.setGroundedPlattform(smA);
-				smB.setGroundedPlattform(smA);
-			}
+
 			
 			if (contact.getFixtureA().getUserData().equals( GameObject.TYPE_PLAYER))
 			{
@@ -443,7 +444,14 @@ public class KletterHoelle extends ApplicationAdapter implements InputProcessor,
 		itStickman = stickmen.iterator();
 		while (itStickman.hasNext())
 		{
-			itStickman.next().button(controller.hashCode(), buttonCode, true);			
+			Stickman stickman = itStickman.next();
+			if (stickman.button(controller.hashCode(), buttonCode, true))
+			{
+				if (stickman.getKey_left() < 0 && stickman.getKey_jump() != buttonCode && stickman.getKey_left() != buttonCode) stickman.setKey_left(buttonCode);
+				else if (stickman.getKey_right() < 0 && stickman.getKey_left() != buttonCode && stickman.getKey_jump() != buttonCode && stickman.getKey_right() != buttonCode) stickman.setKey_right(buttonCode);
+				
+			}
+		
 		}
 		return false;
 	}
