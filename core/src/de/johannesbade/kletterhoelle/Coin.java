@@ -1,5 +1,6 @@
 package de.johannesbade.kletterhoelle;
 
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -44,7 +45,8 @@ public class Coin extends GameObject {
 				break;
 			
 			case COLOR_SWITCH_COIN:
-				sprite = new SpriteAnimation(context, "color_switch_coin", 0.25f);
+				sprite = new SpriteAnimation(context, "color_switch_coin", 0.05f);
+				sprite.setPlaymode(PlayMode.LOOP_PINGPONG);
 				break;
 		}
 		

@@ -1,6 +1,7 @@
 package de.johannesbade.kletterhoelle;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -22,7 +23,7 @@ public class SpriteAnimation {
 		
 		animation = new Animation(animDelay, frames);
 		animation.setPlayMode(Animation.PlayMode.LOOP);
-		
+
 		sprite = new Sprite(animation.getKeyFrame(0));
 		
 	}
@@ -59,7 +60,10 @@ public class SpriteAnimation {
 		return sprite.getHeight();
 	}
 	
-	
+	public void setPlaymode(PlayMode playmode)
+	{
+		animation.setPlayMode(playmode);
+	}
 	
 	
 
